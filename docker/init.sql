@@ -1,8 +1,5 @@
--- ═══════════════════════════════════════════
--- AgentLens — Database Initialization Script
--- ═══════════════════════════════════════════
--- This runs on first container creation.
--- TypeORM migrations handle schema evolution.
+-- AgentLens database schema
+-- Runs on first Docker container creation. TypeORM migrations handle subsequent changes.
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
