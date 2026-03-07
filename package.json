@@ -1,12 +1,27 @@
 {
   "name": "agentlens",
   "version": "0.1.0",
-  "description": "Agentic Observability & Growth Analytics Platform",
+  "description": "Observability and analytics for autonomous AI agents",
   "private": true,
   "license": "MIT",
+  "author": "Venkat <itzvenkat>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/itzvenkat/agentlens"
+  },
+  "homepage": "https://github.com/itzvenkat/agentlens#readme",
+  "bugs": "https://github.com/itzvenkat/agentlens/issues",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
+    "setup": "npm install --legacy-peer-deps && cd dashboard && npm install && cd ..",
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "build:all": "npm run build:api && npm run build:mcp && cd dashboard && npm run build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
     "build:api": "nest build api",
     "build:mcp": "nest build mcp-server",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",

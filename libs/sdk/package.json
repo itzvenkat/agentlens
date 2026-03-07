@@ -1,0 +1,42 @@
+{
+    "name": "@agentlens/sdk",
+    "version": "0.1.0",
+    "description": "Lightweight TypeScript SDK for AgentLens — agentic observability",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/itzvenkat/agentlens",
+        "directory": "libs/sdk"
+    },
+    "homepage": "https://github.com/itzvenkat/agentlens#readme",
+    "bugs": "https://github.com/itzvenkat/agentlens/issues",
+    "keywords": [
+        "agentlens",
+        "observability",
+        "ai-agents",
+        "mcp",
+        "telemetry",
+        "llm",
+        "openai",
+        "anthropic",
+        "tracing"
+    ],
+    "scripts": {
+        "build": "tsc -p tsconfig.build.json",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "typescript": "^5.7.0"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "name": "@agentlens/mcp-server",
+    "version": "0.1.0",
+    "description": "MCP server for AgentLens — self-instrumentation tools for AI agents",
+    "bin": {
+        "agentlens-mcp": "./dist/apps/mcp-server/main.js"
+    },
+    "files": [
+        "dist/apps/mcp-server"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/itzvenkat/agentlens",
+        "directory": "apps/mcp-server"
+    },
+    "homepage": "https://github.com/itzvenkat/agentlens#readme",
+    "bugs": "https://github.com/itzvenkat/agentlens/issues",
+    "keywords": [
+        "mcp",
+        "model-context-protocol",
+        "agentlens",
+        "observability",
+        "ai-agents"
+    ],
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.12.1",
+        "zod": "^3.24.2"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}
