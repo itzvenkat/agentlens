@@ -1,0 +1,25 @@
+import type { Metadata } from 'next';
+import './globals.css';
+import Sidebar from '@/components/Sidebar';
+
+export const metadata: Metadata = {
+    title: 'AgentLens — Agentic Observability & Growth Analytics',
+    description: 'Understand how autonomous AI agents actually perform. Track success rates, token efficiency, tool usage, and agent retention.',
+};
+
+export default function RootLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <html lang="en">
+            <body>
+                <div className="app-layout">
+                    <Sidebar />
+                    <main className="main-content">{children}</main>
+                </div>
+            </body>
+        </html>
+    );
+}
