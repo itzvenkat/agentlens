@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Sidebar from '@/components/Sidebar';
+import DashboardLayout from '@/components/DashboardLayout';
 
 export const metadata: Metadata = {
     title: 'AgentLens — Agentic Observability & Growth Analytics',
@@ -15,10 +15,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-                <div className="app-layout">
-                    <Sidebar />
-                    <main className="main-content">{children}</main>
-                </div>
+                <DashboardLayout>{children}</DashboardLayout>
             </body>
         </html>
     );

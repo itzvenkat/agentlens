@@ -83,40 +83,42 @@ export default function ToolsPage() {
                 <div className="glass-card-header">
                     <h2 className="glass-card-title">All Tools</h2>
                 </div>
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th>Tool</th>
-                            <th>Total Calls</th>
-                            <th>Success Rate</th>
-                            <th>Avg Duration</th>
-                            <th>Retry Rate</th>
-                            <th>Error Rate</th>
-                            <th>Health</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {sorted.map((tool) => (
-                            <tr key={tool.toolName}>
-                                <td>{tool.toolName}</td>
-                                <td>{tool.totalCalls}</td>
-                                <td style={{ color: getEfficiencyColor(tool.successRate), fontWeight: 600 }}>
-                                    {tool.successRate.toFixed(1)}%
-                                </td>
-                                <td>{tool.avgDurationMs}ms</td>
-                                <td style={{ color: tool.retryRate > 10 ? 'var(--status-warning)' : 'var(--text-secondary)' }}>
-                                    {tool.retryRate.toFixed(1)}%
-                                </td>
-                                <td style={{ color: tool.errorRate > 15 ? 'var(--status-error)' : 'var(--text-secondary)' }}>
-                                    {tool.errorRate.toFixed(1)}%
-                                </td>
-                                <td>
-                                    {tool.successRate >= 90 ? '🟢' : tool.successRate >= 70 ? '🟡' : '🔴'}
-                                </td>
+                <div className="table-responsive">
+                    <table className="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Total Calls</th>
+                                <th>Success Rate</th>
+                                <th>Avg Duration</th>
+                                <th>Retry Rate</th>
+                                <th>Error Rate</th>
+                                <th>Health</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {sorted.map((tool) => (
+                                <tr key={tool.toolName}>
+                                    <td>{tool.toolName}</td>
+                                    <td>{tool.totalCalls}</td>
+                                    <td style={{ color: getEfficiencyColor(tool.successRate), fontWeight: 600 }}>
+                                        {tool.successRate.toFixed(1)}%
+                                    </td>
+                                    <td>{tool.avgDurationMs}ms</td>
+                                    <td style={{ color: tool.retryRate > 10 ? 'var(--status-warning)' : 'var(--text-secondary)' }}>
+                                        {tool.retryRate.toFixed(1)}%
+                                    </td>
+                                    <td style={{ color: tool.errorRate > 15 ? 'var(--status-error)' : 'var(--text-secondary)' }}>
+                                        {tool.errorRate.toFixed(1)}%
+                                    </td>
+                                    <td>
+                                        {tool.successRate >= 90 ? '🟢' : tool.successRate >= 70 ? '🟡' : '🔴'}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </>
     );

@@ -152,32 +152,34 @@ export default function OverviewPage() {
                     <h2 className="glass-card-title">Recent Sessions</h2>
                     <span className="glass-card-badge">Latest</span>
                 </div>
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th>Trace</th>
-                            <th>Model</th>
-                            <th>Status</th>
-                            <th>Tokens</th>
-                            <th>Cost</th>
-                            <th>Tools</th>
-                            <th>When</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {sessions.map((s) => (
-                            <tr key={s.id}>
-                                <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{s.traceId}</td>
-                                <td>{s.model}</td>
-                                <td>{getStatusBadge(s.status, s.loopDetected)}</td>
-                                <td>{formatTokens(s.totalInputTokens + s.totalOutputTokens)}</td>
-                                <td>{formatCost(s.totalCostUsd)}</td>
-                                <td>{s.toolCallsCount}</td>
-                                <td style={{ color: 'var(--text-tertiary)' }}>{timeAgo(s.startedAt)}</td>
+                <div className="table-responsive">
+                    <table className="data-table">
+                        <thead>
+                            <tr>
+                                <th>Trace</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Tokens</th>
+                                <th>Cost</th>
+                                <th>Tools</th>
+                                <th>When</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {sessions.map((s) => (
+                                <tr key={s.id}>
+                                    <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{s.traceId}</td>
+                                    <td>{s.model}</td>
+                                    <td>{getStatusBadge(s.status, s.loopDetected)}</td>
+                                    <td>{formatTokens(s.totalInputTokens + s.totalOutputTokens)}</td>
+                                    <td>{formatCost(s.totalCostUsd)}</td>
+                                    <td>{s.toolCallsCount}</td>
+                                    <td style={{ color: 'var(--text-tertiary)' }}>{timeAgo(s.startedAt)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </>
     );

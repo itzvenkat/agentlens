@@ -109,43 +109,45 @@ export default function RetentionPage() {
                 <div className="glass-card-header">
                     <h2 className="glass-card-title">Daily Breakdown</h2>
                 </div>
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Unique Agents</th>
-                            <th>Total Sessions</th>
-                            <th>Returning</th>
-                            <th>Retention Rate</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {[...retention].reverse().map((r) => (
-                            <tr key={r.date}>
-                                <td>{formatDate(r.date)}</td>
-                                <td>{r.uniqueAgents}</td>
-                                <td>{r.totalSessions}</td>
-                                <td>{r.returningAgents}</td>
-                                <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div className="progress-bar" style={{ width: '80px' }}>
-                                            <div
-                                                className="progress-bar-fill"
-                                                style={{
-                                                    width: `${r.retentionRate}%`,
-                                                    background: r.retentionRate >= 70 ? 'var(--gradient-success)' : 'var(--gradient-warning)',
-                                                }}
-                                            />
-                                        </div>
-                                        <span style={{ fontSize: '12px', fontWeight: 600, color: r.retentionRate >= 70 ? 'var(--status-success)' : 'var(--status-warning)' }}>
-                                            {r.retentionRate.toFixed(1)}%
-                                        </span>
-                                    </div>
-                                </td>
+                <div className="table-responsive">
+                    <table className="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Unique Agents</th>
+                                <th>Total Sessions</th>
+                                <th>Returning</th>
+                                <th>Retention Rate</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {[...retention].reverse().map((r) => (
+                                <tr key={r.date}>
+                                    <td>{formatDate(r.date)}</td>
+                                    <td>{r.uniqueAgents}</td>
+                                    <td>{r.totalSessions}</td>
+                                    <td>{r.returningAgents}</td>
+                                    <td>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div className="progress-bar" style={{ width: '80px' }}>
+                                                <div
+                                                    className="progress-bar-fill"
+                                                    style={{
+                                                        width: `${r.retentionRate}%`,
+                                                        background: r.retentionRate >= 70 ? 'var(--gradient-success)' : 'var(--gradient-warning)',
+                                                    }}
+                                                />
+                                            </div>
+                                            <span style={{ fontSize: '12px', fontWeight: 600, color: r.retentionRate >= 70 ? 'var(--status-success)' : 'var(--status-warning)' }}>
+                                                {r.retentionRate.toFixed(1)}%
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </>
     );

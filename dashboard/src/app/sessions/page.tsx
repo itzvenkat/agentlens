@@ -75,36 +75,38 @@ export default function SessionsPage() {
 
             {/* ── Sessions Table ── */}
             <div className="glass-card">
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th>Trace ID</th>
-                            <th>Model</th>
-                            <th>Status</th>
-                            <th>Input Tokens</th>
-                            <th>Output Tokens</th>
-                            <th>Cost</th>
-                            <th>Tools</th>
-                            <th>Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filtered.map((s) => (
-                            <tr key={s.id}>
-                                <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{s.traceId}</td>
-                                <td>{s.model}</td>
-                                <td>{getStatusBadge(s.status, s.loopDetected)}</td>
-                                <td>{s.totalInputTokens.toLocaleString()}</td>
-                                <td>{s.totalOutputTokens.toLocaleString()}</td>
-                                <td>${s.totalCostUsd.toFixed(3)}</td>
-                                <td>{s.toolCallsCount}</td>
-                                <td style={{ color: 'var(--text-tertiary)' }}>
-                                    {formatDuration(s.startedAt, s.endedAt)}
-                                </td>
+                <div className="table-responsive">
+                    <table className="data-table">
+                        <thead>
+                            <tr>
+                                <th>Trace ID</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Input Tokens</th>
+                                <th>Output Tokens</th>
+                                <th>Cost</th>
+                                <th>Tools</th>
+                                <th>Duration</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filtered.map((s) => (
+                                <tr key={s.id}>
+                                    <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{s.traceId}</td>
+                                    <td>{s.model}</td>
+                                    <td>{getStatusBadge(s.status, s.loopDetected)}</td>
+                                    <td>{s.totalInputTokens.toLocaleString()}</td>
+                                    <td>{s.totalOutputTokens.toLocaleString()}</td>
+                                    <td>${s.totalCostUsd.toFixed(3)}</td>
+                                    <td>{s.toolCallsCount}</td>
+                                    <td style={{ color: 'var(--text-tertiary)' }}>
+                                        {formatDuration(s.startedAt, s.endedAt)}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
                 {filtered.length === 0 && (
                     <div className="empty-state">
