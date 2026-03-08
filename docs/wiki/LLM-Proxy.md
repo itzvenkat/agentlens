@@ -7,7 +7,7 @@ The LLM Proxy is a transparent HTTP server that sits between your LLM client and
 ## How it works
 
 ```
-Your Client → localhost:4000 → Proxy logs the call → Forwards to real API → Returns response
+Your Client → localhost:9473 → Proxy logs the call → Forwards to real API → Returns response
 ```
 
 The proxy:
@@ -41,11 +41,11 @@ AGENTLENS_API_KEY=al_your_key npm run start:proxy
 
 | Client | Setting | Value |
 |--------|---------|-------|
-| **Cursor** | Settings → Models → OpenAI Base URL | `http://localhost:4000/v1` |
-| **Continue.dev** | `~/.continue/config.json` → `apiBase` | `http://localhost:4000/v1` |
-| **Any OpenAI SDK** | Environment variable | `OPENAI_BASE_URL=http://localhost:4000/v1` |
-| **Anthropic SDK** | Environment variable | `ANTHROPIC_BASE_URL=http://localhost:4000` |
-| **Python OpenAI** | `openai.base_url` | `http://localhost:4000/v1` |
+| **Cursor** | Settings → Models → OpenAI Base URL | `http://localhost:9473/v1` |
+| **Continue.dev** | `~/.continue/config.json` → `apiBase` | `http://localhost:9473/v1` |
+| **Any OpenAI SDK** | Environment variable | `OPENAI_BASE_URL=http://localhost:9473/v1` |
+| **Anthropic SDK** | Environment variable | `ANTHROPIC_BASE_URL=http://localhost:9473` |
+| **Python OpenAI** | `openai.base_url` | `http://localhost:9473/v1` |
 
 ## Supported Providers
 
@@ -64,7 +64,7 @@ The proxy auto-detects the provider based on request headers:
 Add the `X-AgentLens-Provider` header to force a specific provider:
 
 ```bash
-curl http://localhost:4000/v1/chat/completions \
+curl http://localhost:9473/v1/chat/completions \
   -H "X-AgentLens-Provider: anthropic" \
   -H "x-api-key: sk-ant-..." \
   ...
@@ -98,7 +98,7 @@ Each detected tool call creates a child span linked to the parent LLM span.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PROXY_PORT` | `4000` | Port the proxy listens on |
-| `AGENTLENS_API_URL` | `http://localhost:3000` | AgentLens API endpoint |
+| `PROXY_PORT` | `9473` | Port the proxy listens on |
+| `AGENTLENS_API_URL` | `http://localhost:9471` | AgentLens API endpoint |
 | `AGENTLENS_API_KEY` | — | Your project's API key |
 | `UPSTREAM_BASE_URL` | `https://api.openai.com` | Default upstream LLM API |

@@ -15,7 +15,7 @@ import { AgentLensClient } from '@agentlens/sdk';
 
 const lens = new AgentLensClient({
   apiKey: 'al_your_key_here',
-  endpoint: 'http://localhost:3000',
+  endpoint: 'http://localhost:9471',
 });
 ```
 
@@ -110,7 +110,7 @@ await trace.end('success');
 ```typescript
 const lens = new AgentLensClient({
   apiKey: 'al_...',         // Required
-  endpoint: 'http://...',   // Default: http://localhost:3000
+  endpoint: 'http://...',   // Default: http://localhost:9471
   batchSize: 50,            // Flush after N events
   flushIntervalMs: 5000,    // Auto-flush interval
   enablePiiScrubbing: true, // Redact emails & API keys

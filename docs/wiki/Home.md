@@ -33,20 +33,20 @@ AgentLens is a self-hosted platform that captures telemetry from autonomous AI a
 │                                                                │
 │  ┌─────────┐  ┌─────────┐  ┌───────────┐  ┌──────────────┐   │
 │  │ Postgres │  │  Redis  │  │    API    │  │  Dashboard   │   │
-│  │  :5432   │  │  :6379  │  │   :3000   │  │    :3001     │   │
+│  │  :5432   │  │  :6379  │  │   :9471   │  │    :9472     │   │
 │  └─────────┘  └─────────┘  └─────┬─────┘  └──────────────┘   │
 │                                   │                            │
 │                            ┌──────┴──────┐                     │
 │                            │  LLM Proxy  │                     │
-│                            │    :4000    │                     │
+│                            │    :9473    │                     │
 │                            └─────────────┘                     │
 └──────────────────────────────────────────────────────────────┘
 ```
 
 | Service | Port | Purpose |
 |---------|------|---------|
-| API | 3000 | REST API — receives telemetry, serves analytics |
-| Dashboard | 3001 | Next.js analytics UI |
-| LLM Proxy | 4000 | Transparent proxy — auto-logs LLM calls |
+| API | 9471 | REST API — receives telemetry, serves analytics |
+| Dashboard | 9472 | Next.js analytics UI |
+| LLM Proxy | 9473 | Transparent proxy — auto-logs LLM calls |
 | PostgreSQL | 5432 | Data storage |
 | Redis | 6379 | Job queues (BullMQ) |

@@ -45,7 +45,7 @@ export class AgentLensClient {
     constructor(config: AgentLensConfig) {
         this.config = {
             apiKey: config.apiKey,
-            endpoint: config.endpoint || 'http://localhost:3000',
+            endpoint: config.endpoint || 'http://localhost:9471',
             batchSize: config.batchSize || 50,
             flushIntervalMs: config.flushIntervalMs || 5000,
             enablePiiScrubbing: config.enablePiiScrubbing ?? true,

@@ -3,22 +3,22 @@
  * and the provider API. Auto-logs all requests/responses to AgentLens.
  *
  * Usage:
- *   Set your client's API base URL to http://localhost:4000
+ *   Set your client's API base URL to http://localhost:9473
  *   The proxy forwards to the real API and logs telemetry to AgentLens.
  *
  * Supports: OpenAI, Anthropic, Google, OpenRouter, Ollama, and any OpenAI-compatible API.
  *
  * Environment:
- *   PROXY_PORT         — Port to listen on (default: 4000)
- *   AGENTLENS_API_URL  — AgentLens API endpoint (default: http://localhost:3000)
+ *   PROXY_PORT         — Port to listen on (default: 9473)
+ *   AGENTLENS_API_URL  — AgentLens API endpoint (default: http://localhost:9471)
  *   AGENTLENS_API_KEY  — API key for AgentLens
  *   UPSTREAM_BASE_URL  — Default upstream API (default: https://api.openai.com)
  */
 
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 
-const PORT = parseInt(process.env.PROXY_PORT || '4000', 10);
-const AGENTLENS_URL = process.env.AGENTLENS_API_URL || 'http://localhost:3000';
+const PORT = parseInt(process.env.PROXY_PORT || '9473', 10);
+const AGENTLENS_URL = process.env.AGENTLENS_API_URL || 'http://localhost:9471';
 const AGENTLENS_KEY = process.env.AGENTLENS_API_KEY || '';
 const DEFAULT_UPSTREAM = process.env.UPSTREAM_BASE_URL || 'https://api.openai.com';
 

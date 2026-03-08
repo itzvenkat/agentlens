@@ -11,7 +11,7 @@ AgentLens is a self-hosted observability platform for AI agents — "Datadog for
 - **API**: NestJS 11 + TypeORM + PostgreSQL 16 + BullMQ/Redis 7
 - **Dashboard**: Next.js 15 + React 19
 - **SDK**: TypeScript, zero runtime deps, published as `@agentlens/sdk`
-- **Proxy**: Pure Node.js HTTP server (zero deps), port 4000
+- **Proxy**: Pure Node.js HTTP server (zero deps), port 9473
 - **MCP Server**: `@modelcontextprotocol/sdk`, stdio transport
 - **Module system**: CommonJS everywhere
 
@@ -53,7 +53,7 @@ cd dashboard && npm run dev    # Dashboard dev
 
 ## Environment
 
-From `.env.development`: API on :3000, Dashboard on :3001, Proxy on :4000.
+From `.env.development`: API on :9471, Dashboard on :9472, Proxy on :9473.
 Key vars: `MASTER_API_KEY`, `AGENTLENS_API_KEY`, `UPSTREAM_BASE_URL`, `DB_PASSWORD`.
 
 ## Things to Know

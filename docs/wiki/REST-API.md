@@ -27,7 +27,7 @@ POST /v1/projects
 ```
 
 ```bash
-curl -X POST http://localhost:3000/v1/projects \
+curl -X POST http://localhost:9471/v1/projects \
   -H "X-Master-Key: agentlens_master_dev_key" \
   -H "Content-Type: application/json" \
   -d '{"name": "my-agent", "description": "My AI agent"}'
@@ -51,7 +51,7 @@ POST /v1/ingest
 Send one or more spans in a batch:
 
 ```bash
-curl -X POST http://localhost:3000/v1/ingest \
+curl -X POST http://localhost:9471/v1/ingest \
   -H "X-API-Key: al_your_key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -115,7 +115,7 @@ POST /v1/ingest/end-session
 ```
 
 ```bash
-curl -X POST http://localhost:3000/v1/ingest/end-session \
+curl -X POST http://localhost:9471/v1/ingest/end-session \
   -H "X-API-Key: al_your_key" \
   -H "Content-Type: application/json" \
   -d '{

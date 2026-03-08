@@ -33,21 +33,21 @@ It captures telemetry (LLM calls, tool usage, token consumption) and turns it in
 │                                                                │
 │  ┌─────────┐  ┌─────────┐  ┌───────────┐  ┌──────────────┐   │
 │  │ Postgres │  │  Redis  │  │    API    │  │  Dashboard   │   │
-│  │  :5432   │  │  :6379  │  │   :3000   │  │    :3001     │   │
+│  │  :5432   │  │  :6379  │  │   :9471   │  │    :9472     │   │
 │  └─────────┘  └─────────┘  └─────┬─────┘  └──────────────┘   │
 │                                   │                            │
 │                            ┌──────┴──────┐                     │
 │                            │  LLM Proxy  │                     │
-│                            │    :4000    │                     │
+│                            │    :9473    │                     │
 │                            └─────────────┘                     │
 └──────────────────────────────────────────────────────────────┘
 ```
 
 | Service | Port | What it does |
 |---------|------|-------------|
-| **API** | 3000 | REST API — receives telemetry, serves analytics |
-| **Dashboard** | 3001 | Next.js analytics UI |
-| **LLM Proxy** | 4000 | Transparent proxy — auto-logs LLM calls from any client |
+| **API** | 9471 | REST API — receives telemetry, serves analytics |
+| **Dashboard** | 9472 | Next.js analytics UI |
+| **LLM Proxy** | 9473 | Transparent proxy — auto-logs LLM calls from any client |
 | **PostgreSQL** | 5432 | Data storage |
 | **Redis** | 6379 | Job queues (BullMQ) |
 
@@ -69,16 +69,16 @@ docker compose up -d
 
 All 5 services start up. Wait ~30 seconds for everything to be healthy, then open:
 
-- **Dashboard** → [http://localhost:3001](http://localhost:3001)
-- **API** → [http://localhost:3000/health](http://localhost:3000/health)
-- **Proxy** → [http://localhost:4000/health](http://localhost:4000/health)
+- **Dashboard** → [http://localhost:9472](http://localhost:9472)
+- **API** → [http://localhost:9471/health](http://localhost:9471/health)
+- **Proxy** → [http://localhost:9473/health](http://localhost:9473/health)
 
 ### 2. Create a project
 
 Every agent/app gets its own project with a unique API key:
 
 ```bash
-curl -X POST http://localhost:3000/v1/projects \
+curl -X POST http://localhost:9471/v1/projects \
   -H "X-Master-Key: agentlens_master_dev_key" \
   -H "Content-Type: application/json" \
   -d '{"name": "my-first-agent", "description": "Testing AgentLens"}'
@@ -125,14 +125,14 @@ docker compose up -d proxy
 
 | Client | Where to change | Value |
 |--------|----------------|-------|
-| **Cursor** | Settings → Models → OpenAI Base URL | `http://localhost:4000/v1` |
-| **Any OpenAI client** | Environment variable | `OPENAI_BASE_URL=http://localhost:4000/v1` |
-| **Anthropic SDK** | Auto-detected from request headers | `ANTHROPIC_BASE_URL=http://localhost:4000` |
+| **Cursor** | Settings → Models → OpenAI Base URL | `http://localhost:9473/v1` |
+| **Any OpenAI client** | Environment variable | `OPENAI_BASE_URL=http://localhost:9473/v1` |
+| **Anthropic SDK** | Auto-detected from request headers | `ANTHROPIC_BASE_URL=http://localhost:9473` |
 | **Ollama clients** | Set upstream to Ollama | `UPSTREAM_BASE_URL=http://localhost:11434` |
 
 The proxy auto-detects the provider (OpenAI, Anthropic, Google, OpenRouter, Ollama) based on request headers and URL patterns.
 
-> **How it works:** Client → `localhost:4000` → proxy logs the request → forwards to real API → returns response → logs the response.
+> **How it works:** Client → `localhost:9473` → proxy logs the request → forwards to real API → returns response → logs the response.
 
 ---
 
@@ -152,7 +152,7 @@ import { AgentLensClient, wrapOpenAI } from '@agentlens/sdk';
 
 const lens = new AgentLensClient({
   apiKey: 'al_your_key_here',
-  endpoint: 'http://localhost:3000',
+  endpoint: 'http://localhost:9471',
 });
 
 const openai = wrapOpenAI(lens, new OpenAI());
@@ -170,7 +170,7 @@ const result = await openai.chat.completions.create({
 import Anthropic from '@anthropic-ai/sdk';
 import { AgentLensClient, wrapAnthropic } from '@agentlens/sdk';
 
-const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:3000' });
+const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const anthropic = wrapAnthropic(lens, new Anthropic());
 ```
 
@@ -180,7 +180,7 @@ const anthropic = wrapAnthropic(lens, new Anthropic());
 import { generateText, streamText } from 'ai';
 import { AgentLensClient, wrapVercelAI } from '@agentlens/sdk';
 
-const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:3000' });
+const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const ai = wrapVercelAI(lens, { generateText, streamText });
 ```
 
@@ -189,7 +189,7 @@ const ai = wrapVercelAI(lens, { generateText, streamText });
 ```typescript
 import { AgentLensClient, wrapFetch } from '@agentlens/sdk';
 
-const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:3000' });
+const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 globalThis.fetch = wrapFetch(lens, globalThis.fetch);
 // All subsequent fetch() calls to known LLM APIs are auto-traced
 ```
@@ -226,7 +226,7 @@ Then add to your MCP config:
     "agentlens": {
       "command": "agentlens-mcp",
       "env": {
-        "AGENTLENS_API_URL": "http://localhost:3000",
+        "AGENTLENS_API_URL": "http://localhost:9471",
         "AGENTLENS_API_KEY": "al_your_key_here"
       }
     }
@@ -252,7 +252,7 @@ The agent gets three tools: `report_progress`, `report_result`, and `report_erro
 **Best for:** Any language, any framework, full control.
 
 ```bash
-curl -X POST http://localhost:3000/v1/ingest \
+curl -X POST http://localhost:9471/v1/ingest \
   -H "X-API-Key: al_your_key_here" \
   -H "Content-Type: application/json" \
   -d '{
@@ -273,7 +273,7 @@ curl -X POST http://localhost:3000/v1/ingest \
 
 ## Dashboard
 
-Open [http://localhost:3001](http://localhost:3001) to see:
+Open [http://localhost:9472](http://localhost:9472) to see:
 
 - **Overview** — KPIs, RL tool ratings, recent sessions
 - **Sessions** — Filterable list with full trace data (expandable span trees)
@@ -304,16 +304,16 @@ Copy `.env.example` to `.env.development` and edit:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `APP_PORT` | `3000` | API server port |
+| `APP_PORT` | `9471` | API server port |
 | `DB_HOST` | `postgres` | PostgreSQL host |
 | `DB_PASSWORD` | — | Database password |
 | `REDIS_HOST` | `redis` | Redis host |
 | `MASTER_API_KEY` | — | Master key for creating projects |
-| `APP_CORS_ORIGINS` | `http://localhost:3001` | Allowed CORS origins |
+| `APP_CORS_ORIGINS` | `http://localhost:9472` | Allowed CORS origins |
 | `AGENTLENS_API_KEY` | — | API key for the LLM proxy |
-| `PROXY_PORT` | `4000` | LLM proxy port |
+| `PROXY_PORT` | `9473` | LLM proxy port |
 | `UPSTREAM_BASE_URL` | `https://api.openai.com` | Default upstream LLM API |
-| `DASHBOARD_PORT` | `3001` | Dashboard port |
+| `DASHBOARD_PORT` | `9472` | Dashboard port |
 | `LOOP_DETECTION_THRESHOLD` | `3` | Duplicate tool calls before flagging a loop |
 
 ## Deploy

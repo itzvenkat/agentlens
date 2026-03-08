@@ -1,9 +1,9 @@
 You are working on AgentLens — a self-hosted observability platform for AI agents ("Datadog for agents").
 
 # Architecture
-- NestJS 11 API (apps/api/) on :3000 — telemetry ingestion, analytics, RL engine
-- Next.js 15 dashboard (dashboard/) on :3001 — analytics UI
-- LLM Proxy (apps/proxy/) on :4000 — transparent HTTP proxy, zero deps
+- NestJS 11 API (apps/api/) on :9471 — telemetry ingestion, analytics, RL engine
+- Next.js 15 dashboard (dashboard/) on :9472 — analytics UI
+- LLM Proxy (apps/proxy/) on :9473 — transparent HTTP proxy, zero deps
 - TypeScript SDK (libs/sdk/) — @agentlens/sdk with auto-instrumentation wrappers
 - MCP Server (apps/mcp-server/) — agent self-reporting tools
 - Shared code (libs/common/) — TypeORM entities, DTOs, constants

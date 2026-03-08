@@ -13,11 +13,11 @@ cp .env.example .env.development
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `NODE_ENV` | `development` | Environment (`development`, `production`) |
-| `APP_PORT` | `3000` | API server port |
+| `APP_PORT` | `9471` | API server port |
 | `APP_NAME` | `agentlens` | Application name |
 | `APP_VERSION` | `0.1.0` | Application version |
 | `APP_LOG_LEVEL` | `debug` | Log level (`debug`, `info`, `warn`, `error`) |
-| `APP_CORS_ORIGINS` | `http://localhost:3001` | Comma-separated allowed CORS origins |
+| `APP_CORS_ORIGINS` | `http://localhost:9472` | Comma-separated allowed CORS origins |
 
 ### Database
 
@@ -58,14 +58,14 @@ cp .env.example .env.development
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `AGENTLENS_API_KEY` | — | API key for a project (create one first via the API) |
-| `PROXY_PORT` | `4000` | Port the proxy server listens on |
+| `PROXY_PORT` | `9473` | Port the proxy server listens on |
 | `UPSTREAM_BASE_URL` | `https://api.openai.com` | Default upstream LLM API to forward to |
 
 ### Dashboard
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DASHBOARD_PORT` | `3001` | Dashboard port |
+| `DASHBOARD_PORT` | `9472` | Dashboard port |
 
 ## Production tips
 

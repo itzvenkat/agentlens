@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-const API_URL = process.env.AGENTLENS_API_URL || 'http://localhost:3000';
+const API_URL = process.env.AGENTLENS_API_URL || 'http://localhost:9471';
 const API_KEY = process.env.AGENTLENS_API_KEY || '';
 
 /**
@@ -181,7 +181,7 @@ server.resource(
             {
                 uri: uri.href,
                 mimeType: 'text/plain',
-                text: `AgentLens Dashboard: ${API_URL.replace(':3000', ':3001')}\n\nView your agent analytics, tool efficiency, and session traces.`,
+                text: `AgentLens Dashboard: ${API_URL.replace(':9471', ':9472')}\n\nView your agent analytics, tool efficiency, and session traces.`,
             },
         ],
     }),

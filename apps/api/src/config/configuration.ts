@@ -5,11 +5,11 @@ import { registerAs } from '@nestjs/config';
 export const envValidationSchema = Joi.object({
     // App
     NODE_ENV: Joi.string().valid('development', 'staging', 'production').default('development'),
-    APP_PORT: Joi.number().default(3000),
+    APP_PORT: Joi.number().default(9471),
     APP_NAME: Joi.string().default('agentlens'),
     APP_VERSION: Joi.string().default('0.1.0'),
     APP_LOG_LEVEL: Joi.string().valid('debug', 'info', 'warn', 'error').default('debug'),
-    APP_CORS_ORIGINS: Joi.string().default('http://localhost:3001'),
+    APP_CORS_ORIGINS: Joi.string().default('http://localhost:9472'),
 
     // Database
     DB_HOST: Joi.string().required(),
@@ -40,11 +40,11 @@ export const envValidationSchema = Joi.object({
 
 export const appConfig = registerAs('app', () => ({
     nodeEnv: process.env.NODE_ENV || 'development',
-    port: parseInt(process.env.APP_PORT || '3000', 10),
+    port: parseInt(process.env.APP_PORT || '9471', 10),
     name: process.env.APP_NAME || 'agentlens',
     version: process.env.APP_VERSION || '0.1.0',
     logLevel: process.env.APP_LOG_LEVEL || 'debug',
-    corsOrigins: (process.env.APP_CORS_ORIGINS || 'http://localhost:3001').split(','),
+    corsOrigins: (process.env.APP_CORS_ORIGINS || 'http://localhost:9472').split(','),
 }));
 
 export const databaseConfig = registerAs('database', () => ({

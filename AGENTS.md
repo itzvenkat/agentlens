@@ -14,9 +14,9 @@ AgentLens is a **self-hosted observability platform for AI agents**. It captures
 
 | Service | Port | Technology | Source |
 |---------|------|-----------|--------|
-| API | 3000 | NestJS 11, TypeORM, PostgreSQL 16, BullMQ/Redis | `apps/api/` |
-| Dashboard | 3001 | Next.js 15, React 19 | `dashboard/` |
-| LLM Proxy | 4000 | Pure Node.js HTTP (zero deps) | `apps/proxy/` |
+| API | 9471 | NestJS 11, TypeORM, PostgreSQL 16, BullMQ/Redis | `apps/api/` |
+| Dashboard | 9472 | Next.js 15, React 19 | `dashboard/` |
+| LLM Proxy | 9473 | Pure Node.js HTTP (zero deps) | `apps/proxy/` |
 | PostgreSQL | 5432 | postgres:16-alpine | Docker image |
 | Redis | 6379 | redis:7-alpine | Docker image |
 
@@ -121,14 +121,14 @@ Defined in `.env.example`. Key vars:
 
 | Variable | Default | Used by |
 |----------|---------|---------|
-| `APP_PORT` | 3000 | API |
+| `APP_PORT` | 9471 | API |
 | `DB_HOST` / `DB_PASSWORD` | postgres / — | API |
 | `REDIS_HOST` | redis | API |
 | `MASTER_API_KEY` | — | API (project creation) |
 | `AGENTLENS_API_KEY` | — | Proxy, MCP Server |
-| `PROXY_PORT` | 4000 | Proxy |
+| `PROXY_PORT` | 9473 | Proxy |
 | `UPSTREAM_BASE_URL` | https://api.openai.com | Proxy |
-| `DASHBOARD_PORT` | 3001 | Dashboard |
+| `DASHBOARD_PORT` | 9472 | Dashboard |
 | `LOOP_DETECTION_THRESHOLD` | 3 | Processor |
 
 ## Build & Run

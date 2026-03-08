@@ -3,7 +3,7 @@
  *
  * Usage:
  *   import { AgentLensClient } from '@agentlens/sdk';
- *   const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:3000' });
+ *   const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
  *
  * Provider wrappers (tree-shakeable):
  *   import { wrapOpenAI } from '@agentlens/sdk/wrappers/openai';

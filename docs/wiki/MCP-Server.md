@@ -47,7 +47,7 @@ File: `~/Library/Application Support/Claude/claude_desktop_config.json`
     "agentlens": {
       "command": "agentlens-mcp",
       "env": {
-        "AGENTLENS_API_URL": "http://localhost:3000",
+        "AGENTLENS_API_URL": "http://localhost:9471",
         "AGENTLENS_API_KEY": "al_your_key_here"
       }
     }
@@ -65,7 +65,7 @@ File: `.cursor/mcp.json` (in your project root)
     "agentlens": {
       "command": "agentlens-mcp",
       "env": {
-        "AGENTLENS_API_URL": "http://localhost:3000",
+        "AGENTLENS_API_URL": "http://localhost:9471",
         "AGENTLENS_API_KEY": "al_your_key_here"
       }
     }
@@ -84,7 +84,7 @@ File: `.gemini/settings.json` (in your project root)
       "command": "node",
       "args": ["path/to/agentlens/dist/apps/mcp-server/main.js"],
       "env": {
-        "AGENTLENS_API_URL": "http://localhost:3000",
+        "AGENTLENS_API_URL": "http://localhost:9471",
         "AGENTLENS_API_KEY": "al_your_key_here"
       }
     }
@@ -102,7 +102,7 @@ File: `.vscode/mcp.json` (in your project root)
     "agentlens": {
       "command": "agentlens-mcp",
       "env": {
-        "AGENTLENS_API_URL": "http://localhost:3000",
+        "AGENTLENS_API_URL": "http://localhost:9471",
         "AGENTLENS_API_KEY": "al_your_key_here"
       }
     }
@@ -114,7 +114,7 @@ File: `.vscode/mcp.json` (in your project root)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `AGENTLENS_API_URL` | `http://localhost:3000` | AgentLens API endpoint |
+| `AGENTLENS_API_URL` | `http://localhost:9471` | AgentLens API endpoint |
 | `AGENTLENS_API_KEY` | — | Your project's API key |
 
 ## Important note

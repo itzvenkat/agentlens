@@ -17,7 +17,7 @@ import { AgentLensClient } from '@agentlens/sdk';
 
 const lens = new AgentLensClient({
   apiKey: 'al_your_key_here',
-  endpoint: 'http://localhost:3000',
+  endpoint: 'http://localhost:9471',
 });
 ```
 
@@ -29,7 +29,7 @@ const lens = new AgentLensClient({
 import OpenAI from 'openai';
 import { AgentLensClient, wrapOpenAI } from '@agentlens/sdk';
 
-const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:3000' });
+const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const openai = wrapOpenAI(lens, new OpenAI());
 
 // All calls are now auto-traced — including tool calls in responses
@@ -51,7 +51,7 @@ const result = await openai.chat.completions.create({
 import Anthropic from '@anthropic-ai/sdk';
 import { AgentLensClient, wrapAnthropic } from '@agentlens/sdk';
 
-const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:3000' });
+const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const anthropic = wrapAnthropic(lens, new Anthropic());
 
 // messages.create and messages.stream are both auto-traced
@@ -74,7 +74,7 @@ import { generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { AgentLensClient, wrapVercelAI } from '@agentlens/sdk';
 
-const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:3000' });
+const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const ai = wrapVercelAI(lens, { generateText, streamText });
 
 const result = await ai.generateText({
@@ -95,7 +95,7 @@ Wraps `globalThis.fetch` to auto-detect calls to known LLM APIs:
 ```typescript
 import { AgentLensClient, wrapFetch } from '@agentlens/sdk';
 
-const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:3000' });
+const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 globalThis.fetch = wrapFetch(lens, globalThis.fetch);
 
 // Now ALL fetch() calls to OpenAI, Anthropic, Google, OpenRouter, or Ollama
@@ -158,7 +158,7 @@ span.end({
 ```typescript
 const lens = new AgentLensClient({
   apiKey: 'al_...',           // Required — your project API key
-  endpoint: 'http://...',     // Default: http://localhost:3000
+  endpoint: 'http://...',     // Default: http://localhost:9471
   batchSize: 50,              // Flush after N events (default: 50)
   flushIntervalMs: 5000,      // Auto-flush interval in ms (default: 5000)
   enablePiiScrubbing: true,   // Redact emails & API keys (default: true)

@@ -39,13 +39,13 @@ NODE_ENV=production docker compose up -d --build
 docker compose ps
 
 # Check API
-curl http://localhost:3000/health
+curl http://localhost:9471/health
 
 # Check proxy
-curl http://localhost:4000/health
+curl http://localhost:9473/health
 
 # Check dashboard
-curl -s http://localhost:3001 | head -1
+curl -s http://localhost:9472 | head -1
 
 # View logs
 docker compose logs -f
@@ -92,15 +92,15 @@ server {
     server_name agentlens.yourdomain.com;
 
     location / {
-        proxy_pass http://localhost:3001;
+        proxy_pass http://localhost:9472;
     }
 
     location /v1/ {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:9471;
     }
 
     location /proxy/ {
-        proxy_pass http://localhost:4000/;
+        proxy_pass http://localhost:9473/;
     }
 }
 ```

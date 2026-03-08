@@ -45,14 +45,14 @@ services:
       DB_HOST: postgres
       REDIS_HOST: redis
     ports:
-      - "${APP_PORT:-3000}:3000"
+      - "${APP_PORT:-9471}:9471"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health" ]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9471/health" ]
       interval: 30s
       timeout: 10s
       start_period: 15s
@@ -65,9 +65,9 @@ services:
     container_name: agentlens-dashboard
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_URL: http://api:3000
+      NEXT_PUBLIC_API_URL: http://api:9471
     ports:
-      - "${DASHBOARD_PORT:-3001}:3001"
+      - "${DASHBOARD_PORT:-9472}:9472"
     depends_on:
       api:
         condition: service_healthy
@@ -79,12 +79,12 @@ services:
     container_name: agentlens-proxy
     restart: unless-stopped
     environment:
-      PROXY_PORT: "4000"
-      AGENTLENS_API_URL: http://api:3000
+      PROXY_PORT: "9473"
+      AGENTLENS_API_URL: http://api:9471
       AGENTLENS_API_KEY: ${AGENTLENS_API_KEY:-}
       UPSTREAM_BASE_URL: ${UPSTREAM_BASE_URL:-https://api.openai.com}
     ports:
-      - "${PROXY_PORT:-4000}:4000"
+      - "${PROXY_PORT:-9473}:9473"
     depends_on:
       api:
         condition: service_healthy
