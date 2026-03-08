@@ -9,7 +9,7 @@ import {
     Logger,
 } from '@nestjs/common';
 import { IngestService } from './ingest.service';
-import { IngestBatchDto, EndSessionDto } from '@agentlens/common';
+import { IngestBatchDto, EndSessionDto } from '@itzvenkat0/agentlens-common';
 import { PiiScrubberInterceptor } from './pii-scrubber.interceptor';
 
 @Controller('v1/ingest')

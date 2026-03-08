@@ -73,8 +73,8 @@ const LLM_ENDPOINTS: Array<{
  * them as spans. Works with any provider without specific SDK integration.
  *
  * Usage:
- *   import { AgentLensClient } from '@agentlens/sdk';
- *   import { wrapFetch } from '@agentlens/sdk/wrappers/fetch';
+ *   import { AgentLensClient } from '@itzvenkat0/agentlens-sdk';
+ *   import { wrapFetch } from '@itzvenkat0/agentlens-sdk/wrappers/fetch';
  *
  *   const lens = new AgentLensClient({ apiKey: 'al_...' });
  *   globalThis.fetch = wrapFetch(lens, globalThis.fetch);

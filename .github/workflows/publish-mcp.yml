@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish:
-    name: Publish @agentlens/mcp-server to npm
+    name: Publish @itzvenkat0/agentlens-mcp-server to npm
     runs-on: ubuntu-latest
     permissions:
       contents: read

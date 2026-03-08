@@ -8,7 +8,7 @@ import {
     ToolCall,
     TelemetryEvent,
     DailyAggregate,
-} from '@agentlens/common';
+} from '@itzvenkat0/agentlens-common';
 
 // Load env based on NODE_ENV
 const envFile = `.env.${process.env.NODE_ENV || 'development'}`;

@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Project } from '@agentlens/common';
+import { Project } from '@itzvenkat0/agentlens-common';
 import { ApiKeyGuard } from './api-key.guard';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';

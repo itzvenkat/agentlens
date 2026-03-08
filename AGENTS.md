@@ -73,7 +73,7 @@ Uses `@modelcontextprotocol/sdk` with stdio transport. Exposes 3 tools:
 - `report_result` — end a session with success/failure status
 - `report_error` — report an error with severity
 
-### `libs/sdk/src/` — TypeScript SDK (`@agentlens/sdk`)
+### `libs/sdk/src/` — TypeScript SDK (`@itzvenkat0/agentlens-sdk`)
 
 | File | Exports | Purpose |
 |------|---------|---------|
@@ -154,8 +154,8 @@ cd dashboard && npm run dev # Dashboard with hot reload
 
 | Package | Dir | Published via |
 |---------|-----|---------------|
-| `@agentlens/sdk` | `libs/sdk/` | `.github/workflows/publish-sdk.yml` on release |
-| `@agentlens/mcp-server` | `apps/mcp-server/` | `.github/workflows/publish-mcp.yml` on release |
+| `@itzvenkat0/agentlens-sdk` | `libs/sdk/` | `.github/workflows/publish-sdk.yml` on release |
+| `@itzvenkat0/agentlens-mcp-server` | `apps/mcp-server/` | `.github/workflows/publish-mcp.yml` on release |
 
 ## Conventions
 

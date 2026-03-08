@@ -10,8 +10,8 @@ import { Trace } from '../trace';
  *
  * Usage:
  *   import OpenAI from 'openai';
- *   import { AgentLensClient } from '@agentlens/sdk';
- *   import { wrapOpenAI } from '@agentlens/sdk/wrappers/openai';
+ *   import { AgentLensClient } from '@itzvenkat0/agentlens-sdk';
+ *   import { wrapOpenAI } from '@itzvenkat0/agentlens-sdk/wrappers/openai';
  *
  *   const lens = new AgentLensClient({ apiKey: 'al_...' });
  *   const openai = wrapOpenAI(lens, new OpenAI());

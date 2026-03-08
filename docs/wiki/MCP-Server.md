@@ -21,7 +21,7 @@ The agent decides when to call these tools — they appear alongside its other t
 ### Option A: npm (global)
 
 ```bash
-npm install -g @agentlens/mcp-server
+npm install -g @itzvenkat0/agentlens-mcp-server
 ```
 
 ### Option B: From source

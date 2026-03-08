@@ -9,8 +9,8 @@ import { AgentLensClient } from '../client';
  *
  * Usage:
  *   import { generateText, streamText } from 'ai';
- *   import { AgentLensClient } from '@agentlens/sdk';
- *   import { wrapVercelAI } from '@agentlens/sdk/wrappers/vercel-ai';
+ *   import { AgentLensClient } from '@itzvenkat0/agentlens-sdk';
+ *   import { wrapVercelAI } from '@itzvenkat0/agentlens-sdk/wrappers/vercel-ai';
  *
  *   const lens = new AgentLensClient({ apiKey: 'al_...' });
  *   const ai = wrapVercelAI(lens, { generateText, streamText });

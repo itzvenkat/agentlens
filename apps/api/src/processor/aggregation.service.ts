@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { DailyAggregate, AgentSession } from '@agentlens/common';
+import { DailyAggregate, AgentSession } from '@itzvenkat0/agentlens-common';
 
 @Injectable()
 export class AggregationService {

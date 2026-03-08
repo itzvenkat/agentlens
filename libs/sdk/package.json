@@ -1,5 +1,5 @@
 {
-    "name": "@agentlens/sdk",
+    "name": "@itzvenkat0/agentlens-sdk",
     "version": "0.2.0",
     "description": "Lightweight TypeScript SDK for AgentLens — agentic observability with auto-instrumentation",
     "main": "dist/index.js",

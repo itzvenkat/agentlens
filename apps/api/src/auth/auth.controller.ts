@@ -2,7 +2,7 @@ import { Controller, Post, Get, Body, Headers, UnauthorizedException } from '@ne
 import { ConfigService } from '@nestjs/config';
 import { Public } from './api-key.guard';
 import { AuthService } from './auth.service';
-import { CreateProjectDto } from '@agentlens/common';
+import { CreateProjectDto } from '@itzvenkat0/agentlens-common';
 
 @Controller('v1/projects')
 export class AuthController {

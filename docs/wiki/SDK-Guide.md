@@ -1,19 +1,19 @@
 # SDK Guide
 
-The `@agentlens/sdk` package provides auto-instrumentation wrappers for popular LLM providers. Add 1-2 lines of code and all LLM calls, tool usage, and token consumption are automatically captured.
+The `@itzvenkat0/agentlens-sdk` package provides auto-instrumentation wrappers for popular LLM providers. Add 1-2 lines of code and all LLM calls, tool usage, and token consumption are automatically captured.
 
 **Best for:** TypeScript/Node.js applications, custom agents, backend services.
 
 ## Install
 
 ```bash
-npm install @agentlens/sdk
+npm install @itzvenkat0/agentlens-sdk
 ```
 
 ## Initialize
 
 ```typescript
-import { AgentLensClient } from '@agentlens/sdk';
+import { AgentLensClient } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({
   apiKey: 'al_your_key_here',
@@ -27,7 +27,7 @@ const lens = new AgentLensClient({
 
 ```typescript
 import OpenAI from 'openai';
-import { AgentLensClient, wrapOpenAI } from '@agentlens/sdk';
+import { AgentLensClient, wrapOpenAI } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const openai = wrapOpenAI(lens, new OpenAI());
@@ -49,7 +49,7 @@ const result = await openai.chat.completions.create({
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
-import { AgentLensClient, wrapAnthropic } from '@agentlens/sdk';
+import { AgentLensClient, wrapAnthropic } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const anthropic = wrapAnthropic(lens, new Anthropic());
@@ -72,7 +72,7 @@ const result = await anthropic.messages.create({
 ```typescript
 import { generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
-import { AgentLensClient, wrapVercelAI } from '@agentlens/sdk';
+import { AgentLensClient, wrapVercelAI } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const ai = wrapVercelAI(lens, { generateText, streamText });
@@ -93,7 +93,7 @@ const result = await ai.generateText({
 Wraps `globalThis.fetch` to auto-detect calls to known LLM APIs:
 
 ```typescript
-import { AgentLensClient, wrapFetch } from '@agentlens/sdk';
+import { AgentLensClient, wrapFetch } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 globalThis.fetch = wrapFetch(lens, globalThis.fetch);

@@ -4,8 +4,8 @@ You are working on AgentLens — a self-hosted observability platform for AI age
 - NestJS 11 API (apps/api/) on port 3000
 - Next.js 15 dashboard (dashboard/) on port 3001
 - LLM Proxy (apps/proxy/) on port 4000 — pure Node.js, zero deps
-- TypeScript SDK (libs/sdk/) — @agentlens/sdk on npm
-- MCP Server (apps/mcp-server/) — @agentlens/mcp-server on npm
+- TypeScript SDK (libs/sdk/) — @itzvenkat0/agentlens-sdk on npm
+- MCP Server (apps/mcp-server/) — @itzvenkat0/agentlens-mcp-server on npm
 - Shared code in libs/common/ (entities, DTOs, constants)
 
 ## Conventions

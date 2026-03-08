@@ -141,14 +141,14 @@ The proxy auto-detects the provider (OpenAI, Anthropic, Google, OpenRouter, Olla
 **Best for:** TypeScript/Node.js apps where you want fine-grained control.
 
 ```bash
-npm install @agentlens/sdk
+npm install @itzvenkat0/agentlens-sdk
 ```
 
 **OpenAI:**
 
 ```typescript
 import OpenAI from 'openai';
-import { AgentLensClient, wrapOpenAI } from '@agentlens/sdk';
+import { AgentLensClient, wrapOpenAI } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({
   apiKey: 'al_your_key_here',
@@ -168,7 +168,7 @@ const result = await openai.chat.completions.create({
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
-import { AgentLensClient, wrapAnthropic } from '@agentlens/sdk';
+import { AgentLensClient, wrapAnthropic } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const anthropic = wrapAnthropic(lens, new Anthropic());
@@ -178,7 +178,7 @@ const anthropic = wrapAnthropic(lens, new Anthropic());
 
 ```typescript
 import { generateText, streamText } from 'ai';
-import { AgentLensClient, wrapVercelAI } from '@agentlens/sdk';
+import { AgentLensClient, wrapVercelAI } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 const ai = wrapVercelAI(lens, { generateText, streamText });
@@ -187,7 +187,7 @@ const ai = wrapVercelAI(lens, { generateText, streamText });
 **Generic (any provider via fetch):**
 
 ```typescript
-import { AgentLensClient, wrapFetch } from '@agentlens/sdk';
+import { AgentLensClient, wrapFetch } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
 globalThis.fetch = wrapFetch(lens, globalThis.fetch);
@@ -215,7 +215,7 @@ await trace.end('success');
 Install globally:
 
 ```bash
-npm install -g @agentlens/mcp-server
+npm install -g @itzvenkat0/agentlens-mcp-server
 ```
 
 Then add to your MCP config:
@@ -379,7 +379,7 @@ agentlens/
 │   └── proxy/                  # Transparent LLM Proxy
 ├── libs/
 │   ├── common/                 # Shared entities, DTOs, constants
-│   └── sdk/                    # TypeScript SDK (@agentlens/sdk)
+│   └── sdk/                    # TypeScript SDK (@itzvenkat0/agentlens-sdk)
 │       ├── client.ts           # Core client (batching, flush, PII)
 │       ├── trace.ts            # Trace + Span classes
 │       └── wrappers/           # OpenAI, Anthropic, Vercel AI, fetch
@@ -424,8 +424,8 @@ AgentLens learns from session outcomes using Q-learning:
 
 | Package | npm | Description |
 |---------|-----|-------------|
-| `@agentlens/sdk` | [npm](https://www.npmjs.com/package/@agentlens/sdk) | SDK with auto-instrumentation wrappers |
-| `@agentlens/mcp-server` | [npm](https://www.npmjs.com/package/@agentlens/mcp-server) | MCP server for agent self-instrumentation |
+| `@itzvenkat0/agentlens-sdk` | [npm](https://www.npmjs.com/package/@itzvenkat0/agentlens-sdk) | SDK with auto-instrumentation wrappers |
+| `@itzvenkat0/agentlens-mcp-server` | [npm](https://www.npmjs.com/package/@itzvenkat0/agentlens-mcp-server) | MCP server for agent self-instrumentation |
 
 ## License
 

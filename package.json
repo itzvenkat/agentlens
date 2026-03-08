@@ -115,8 +115,8 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@agentlens/common(|/.*)$": "<rootDir>/libs/common/src/$1",
-      "^@agentlens/sdk(|/.*)$": "<rootDir>/libs/sdk/src/$1"
+      "^@itzvenkat0/agentlens-common(|/.*)$": "<rootDir>/libs/common/src/$1",
+      "^@itzvenkat0/agentlens-sdk(|/.*)$": "<rootDir>/libs/sdk/src/$1"
     }
   }
 }

@@ -5,8 +5,8 @@ import { TelemetryProcessor } from './telemetry.processor';
 import { LoopDetectorService } from './loop-detector.service';
 import { AggregationService } from './aggregation.service';
 import { RLRewardService } from './rl-reward.service';
-import { AgentSession, Span, ToolCall, TelemetryEvent, DailyAggregate } from '@agentlens/common';
-import { QUEUE_NAMES } from '@agentlens/common';
+import { AgentSession, Span, ToolCall, TelemetryEvent, DailyAggregate } from '@itzvenkat0/agentlens-common';
+import { QUEUE_NAMES } from '@itzvenkat0/agentlens-common';
 
 @Module({
     imports: [

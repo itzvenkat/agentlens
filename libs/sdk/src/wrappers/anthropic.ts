@@ -9,8 +9,8 @@ import { AgentLensClient } from '../client';
  *
  * Usage:
  *   import Anthropic from '@anthropic-ai/sdk';
- *   import { AgentLensClient } from '@agentlens/sdk';
- *   import { wrapAnthropic } from '@agentlens/sdk/wrappers/anthropic';
+ *   import { AgentLensClient } from '@itzvenkat0/agentlens-sdk';
+ *   import { wrapAnthropic } from '@itzvenkat0/agentlens-sdk/wrappers/anthropic';
  *
  *   const lens = new AgentLensClient({ apiKey: 'al_...' });
  *   const anthropic = wrapAnthropic(lens, new Anthropic());

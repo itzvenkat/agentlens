@@ -28,7 +28,7 @@ import {
     ToolCall,
     TelemetryEvent,
     DailyAggregate,
-} from '@agentlens/common';
+} from '@itzvenkat0/agentlens-common';
 
 @Module({
     imports: [

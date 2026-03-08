@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { AgentSession, ToolCall, Span } from '@agentlens/common';
+import { AgentSession, ToolCall, Span } from '@itzvenkat0/agentlens-common';
 
 /**
  * RL Reward Service — Q-Learning for Tool Optimization

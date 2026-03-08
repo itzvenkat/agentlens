@@ -29,7 +29,7 @@ agentlens/
 │   │       ├── constants/          # Shared constants
 │   │       └── interfaces/         # Shared TypeScript interfaces
 │   │
-│   └── sdk/                        # @agentlens/sdk (published to npm)
+│   └── sdk/                        # @itzvenkat0/agentlens-sdk (published to npm)
 │       └── src/
 │           ├── client.ts           # AgentLensClient (batching, flush, PII)
 │           ├── trace.ts            # Trace + Span classes

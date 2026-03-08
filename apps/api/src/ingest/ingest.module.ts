@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bullmq';
 import { IngestController } from './ingest.controller';
 import { IngestService } from './ingest.service';
-import { AgentSession, Span, ToolCall, TelemetryEvent } from '@agentlens/common';
-import { QUEUE_NAMES } from '@agentlens/common';
+import { AgentSession, Span, ToolCall, TelemetryEvent } from '@itzvenkat0/agentlens-common';
+import { QUEUE_NAMES } from '@itzvenkat0/agentlens-common';
 
 @Module({
     imports: [

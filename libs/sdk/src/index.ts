@@ -1,15 +1,15 @@
 /**
- * @agentlens/sdk — Lightweight TypeScript SDK for agentic observability.
+ * @itzvenkat0/agentlens-sdk — Lightweight TypeScript SDK for agentic observability.
  *
  * Usage:
- *   import { AgentLensClient } from '@agentlens/sdk';
+ *   import { AgentLensClient } from '@itzvenkat0/agentlens-sdk';
  *   const lens = new AgentLensClient({ apiKey: 'al_...', endpoint: 'http://localhost:9471' });
  *
  * Provider wrappers (tree-shakeable):
- *   import { wrapOpenAI } from '@agentlens/sdk/wrappers/openai';
- *   import { wrapAnthropic } from '@agentlens/sdk/wrappers/anthropic';
- *   import { wrapVercelAI } from '@agentlens/sdk/wrappers/vercel-ai';
- *   import { wrapFetch } from '@agentlens/sdk/wrappers/fetch';
+ *   import { wrapOpenAI } from '@itzvenkat0/agentlens-sdk/wrappers/openai';
+ *   import { wrapAnthropic } from '@itzvenkat0/agentlens-sdk/wrappers/anthropic';
+ *   import { wrapVercelAI } from '@itzvenkat0/agentlens-sdk/wrappers/vercel-ai';
+ *   import { wrapFetch } from '@itzvenkat0/agentlens-sdk/wrappers/fetch';
  */
 
 // Core

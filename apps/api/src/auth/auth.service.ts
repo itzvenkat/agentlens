@@ -2,7 +2,7 @@ import { Injectable, ConflictException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createHash, randomUUID } from 'crypto';
-import { Project, CreateProjectDto, ProjectResponseDto } from '@agentlens/common';
+import { Project, CreateProjectDto, ProjectResponseDto } from '@itzvenkat0/agentlens-common';
 
 @Injectable()
 export class AuthService {

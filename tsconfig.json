@@ -18,16 +18,16 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@agentlens/common": [
+      "@itzvenkat0/agentlens-common": [
         "libs/common/src"
       ],
-      "@agentlens/common/*": [
+      "@itzvenkat0/agentlens-common/*": [
         "libs/common/src/*"
       ],
-      "@agentlens/sdk": [
+      "@itzvenkat0/agentlens-sdk": [
         "libs/sdk/src"
       ],
-      "@agentlens/sdk/*": [
+      "@itzvenkat0/agentlens-sdk/*": [
         "libs/sdk/src/*"
       ]
     }

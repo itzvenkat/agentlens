@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { ToolCall, TelemetryEvent, AgentSession } from '@agentlens/common';
+import { ToolCall, TelemetryEvent, AgentSession } from '@itzvenkat0/agentlens-common';
 
 /**
  * Loop Detector — identifies when an agent is stuck in a retry loop.

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reflector } from '@nestjs/core';
 import { createHash } from 'crypto';
-import { Project } from '@agentlens/common';
+import { Project } from '@itzvenkat0/agentlens-common';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 import { SetMetadata } from '@nestjs/common';

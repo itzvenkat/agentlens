@@ -11,7 +11,7 @@ import {
     RetentionPointDto,
     SessionListItemDto,
     PaginatedResult,
-} from '@agentlens/common';
+} from '@itzvenkat0/agentlens-common';
 
 @Injectable()
 export class AnalyticsService {

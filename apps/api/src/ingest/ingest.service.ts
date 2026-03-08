@@ -15,7 +15,7 @@ import {
     QUEUE_NAMES,
     SPAN_TYPES,
     TelemetryIngestResult,
-} from '@agentlens/common';
+} from '@itzvenkat0/agentlens-common';
 
 @Injectable()
 export class IngestService {

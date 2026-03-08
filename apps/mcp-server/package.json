@@ -1,12 +1,12 @@
 {
-    "name": "@agentlens/mcp-server",
-    "version": "0.1.0",
+    "name": "@itzvenkat0/agentlens-mcp-server",
+    "version": "0.1.4",
     "description": "MCP server for AgentLens — self-instrumentation tools for AI agents",
     "bin": {
-        "agentlens-mcp": "./dist/apps/mcp-server/main.js"
+        "agentlens-mcp": "./dist/main.js"
     },
     "files": [
-        "dist/apps/mcp-server"
+        "dist"
     ],
     "license": "MIT",
     "repository": {

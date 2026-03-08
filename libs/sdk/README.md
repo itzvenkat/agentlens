@@ -1,17 +1,17 @@
-# @agentlens/sdk
+# @itzvenkat0/agentlens-sdk
 
 Lightweight TypeScript SDK for [AgentLens](https://github.com/itzvenkat/agentlens) — automatic observability for AI agents.
 
 ## Install
 
 ```bash
-npm install @agentlens/sdk
+npm install @itzvenkat0/agentlens-sdk
 ```
 
 ## Quick Start
 
 ```typescript
-import { AgentLensClient } from '@agentlens/sdk';
+import { AgentLensClient } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({
   apiKey: 'al_your_key_here',
@@ -25,7 +25,7 @@ const lens = new AgentLensClient({
 
 ```typescript
 import OpenAI from 'openai';
-import { AgentLensClient, wrapOpenAI } from '@agentlens/sdk';
+import { AgentLensClient, wrapOpenAI } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...' });
 const openai = wrapOpenAI(lens, new OpenAI());
@@ -41,7 +41,7 @@ const result = await openai.chat.completions.create({
 
 ```typescript
 import Anthropic from '@anthropic-ai/sdk';
-import { AgentLensClient, wrapAnthropic } from '@agentlens/sdk';
+import { AgentLensClient, wrapAnthropic } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...' });
 const anthropic = wrapAnthropic(lens, new Anthropic());
@@ -60,7 +60,7 @@ const result = await anthropic.messages.create({
 ```typescript
 import { generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
-import { AgentLensClient, wrapVercelAI } from '@agentlens/sdk';
+import { AgentLensClient, wrapVercelAI } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...' });
 const ai = wrapVercelAI(lens, { generateText, streamText });
@@ -77,7 +77,7 @@ const result = await ai.generateText({
 Auto-detects calls to OpenAI, Anthropic, Google, OpenRouter, and Ollama APIs:
 
 ```typescript
-import { AgentLensClient, wrapFetch } from '@agentlens/sdk';
+import { AgentLensClient, wrapFetch } from '@itzvenkat0/agentlens-sdk';
 
 const lens = new AgentLensClient({ apiKey: 'al_...' });
 globalThis.fetch = wrapFetch(lens, globalThis.fetch);
