@@ -72,6 +72,23 @@ services:
       api:
         condition: service_healthy
 
+  proxy:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.proxy
+    container_name: agentlens-proxy
+    restart: unless-stopped
+    environment:
+      PROXY_PORT: "4000"
+      AGENTLENS_API_URL: http://api:3000
+      AGENTLENS_API_KEY: ${AGENTLENS_API_KEY:-}
+      UPSTREAM_BASE_URL: ${UPSTREAM_BASE_URL:-https://api.openai.com}
+    ports:
+      - "${PROXY_PORT:-4000}:4000"
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   redis_data:

@@ -1,9 +1,31 @@
 {
     "name": "@agentlens/sdk",
-    "version": "0.1.0",
-    "description": "Lightweight TypeScript SDK for AgentLens — agentic observability",
+    "version": "0.2.0",
+    "description": "Lightweight TypeScript SDK for AgentLens — agentic observability with auto-instrumentation",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./wrappers/openai": {
+            "types": "./dist/wrappers/openai.d.ts",
+            "default": "./dist/wrappers/openai.js"
+        },
+        "./wrappers/anthropic": {
+            "types": "./dist/wrappers/anthropic.d.ts",
+            "default": "./dist/wrappers/anthropic.js"
+        },
+        "./wrappers/vercel-ai": {
+            "types": "./dist/wrappers/vercel-ai.d.ts",
+            "default": "./dist/wrappers/vercel-ai.js"
+        },
+        "./wrappers/fetch": {
+            "types": "./dist/wrappers/fetch.d.ts",
+            "default": "./dist/wrappers/fetch.js"
+        }
+    },
     "files": [
         "dist"
     ],
@@ -24,7 +46,9 @@
         "llm",
         "openai",
         "anthropic",
-        "tracing"
+        "vercel-ai",
+        "tracing",
+        "auto-instrumentation"
     ],
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
@@ -32,6 +56,22 @@
     },
     "devDependencies": {
         "typescript": "^5.7.0"
+    },
+    "peerDependencies": {
+        "openai": ">=4.0.0",
+        "@anthropic-ai/sdk": ">=0.30.0",
+        "ai": ">=3.0.0"
+    },
+    "peerDependenciesMeta": {
+        "openai": {
+            "optional": true
+        },
+        "@anthropic-ai/sdk": {
+            "optional": true
+        },
+        "ai": {
+            "optional": true
+        }
     },
     "engines": {
         "node": ">=18"

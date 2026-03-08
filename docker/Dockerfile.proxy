@@ -1,0 +1,33 @@
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+# Install TypeScript + Node types locally so tsc can find them
+RUN npm init -y && npm install typescript @types/node
+
+# Copy only what's needed to compile
+COPY tsconfig.json ./
+COPY apps/proxy/ ./apps/proxy/
+
+RUN npx tsc -p apps/proxy/tsconfig.app.json
+
+# ── Production ───────────────────────────────────────
+FROM node:22-alpine
+
+RUN addgroup -g 1001 -S agentlens && \
+    adduser -S agentlens -u 1001
+
+WORKDIR /app
+
+COPY --from=builder /app/dist/apps/proxy ./dist
+
+RUN chown -R agentlens:agentlens /app
+
+USER agentlens
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
+
+EXPOSE 4000
+
+CMD ["node", "dist/main.js"]

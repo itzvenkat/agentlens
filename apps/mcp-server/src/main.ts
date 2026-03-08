@@ -36,6 +36,7 @@ async function forwardToApi(path: string, body: unknown): Promise<unknown> {
 }
 
 // ── Tool: report_progress ──
+// @ts-expect-error - MCP SDK Zod type inference is excessively deep
 server.tool(
     'report_progress',
     'Report an intermediate step in your task execution (span start/end, tool call, LLM call)',
@@ -82,6 +83,7 @@ server.tool(
 );
 
 // ── Tool: report_result ──
+// @ts-expect-error - MCP SDK Zod type inference is excessively deep
 server.tool(
     'report_result',
     'Report the final outcome of a task (success or failure)',
@@ -117,6 +119,7 @@ server.tool(
 );
 
 // ── Tool: report_error ──
+// @ts-expect-error - MCP SDK Zod type inference is excessively deep
 server.tool(
     'report_error',
     'Report an error or exception encountered during task execution',

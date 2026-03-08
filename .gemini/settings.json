@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "agentlens": {
+            "command": "node",
+            "args": [
+                "./dist/apps/mcp-server/main.js"
+            ],
+            "env": {
+                "AGENTLENS_API_URL": "http://localhost:3000",
+                "AGENTLENS_API_KEY": "al_bdf0e779cdb34cf4aa0c9c809dfce67e"
+            }
+        }
+    }
+}

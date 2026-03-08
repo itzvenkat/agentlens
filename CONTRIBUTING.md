@@ -20,14 +20,18 @@ npm run start:api:dev
 
 # Start dashboard (separate terminal)
 cd dashboard && npm run dev
+
+# Start proxy (separate terminal)
+npm run start:proxy
 ```
 
 ## Project structure
 
-- `apps/api/` — NestJS backend API
+- `apps/api/` — NestJS backend API (telemetry ingestion, analytics, RL engine)
 - `apps/mcp-server/` — MCP server for agent self-instrumentation
+- `apps/proxy/` — Transparent LLM Proxy for desktop apps and IDEs
 - `libs/common/` — Shared entities, DTOs, constants
-- `libs/sdk/` — TypeScript SDK (published to npm)
+- `libs/sdk/` — TypeScript SDK with auto-instrumentation wrappers
 - `dashboard/` — Next.js analytics dashboard
 - `docker/` — Dockerfiles and database init scripts
 
@@ -35,7 +39,7 @@ cd dashboard && npm run dev
 
 1. **Fork** the repo and create a branch from `main`
 2. **Write code** — follow the existing patterns and style
-3. **Test** — run `npm test` and `npm run build:api` before submitting
+3. **Test** — run `npm test` and `npm run build:all` before submitting
 4. **Commit** — use clear commit messages (`fix: ...`, `feat: ...`, `docs: ...`)
 5. **Open a PR** against `main`
 
