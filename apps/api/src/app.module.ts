@@ -47,21 +47,31 @@ import {
         // ── Database ──
         TypeOrmModule.forRootAsync({
             inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
-                type: 'postgres' as const,
-                host: config.get<string>('database.host'),
-                port: config.get<number>('database.port'),
-                username: config.get<string>('database.username'),
-                password: config.get<string>('database.password'),
-                database: config.get<string>('database.database'),
-                synchronize: config.get<boolean>('database.synchronize'),
-                logging: config.get<boolean>('database.logging'),
-                ssl: config.get<boolean>('database.ssl')
-                    ? { rejectUnauthorized: false }
-                    : false,
-                entities: [Project, AgentSession, Span, ToolCall, TelemetryEvent, DailyAggregate],
-                autoLoadEntities: true,
-            }),
+            useFactory: (config: ConfigService) => {
+                const isProd = config.get<string>('app.nodeEnv') === 'production';
+                const syncRequested = config.get<boolean>('database.synchronize');
+
+                // DEFAULT: Never synchronize by default in any environment.
+                // Migrations are now the source of truth everywhere.
+                // OVERRIDE: Allow synchronization only in non-production if explicitly requested.
+                const synchronize = !isProd && !!syncRequested;
+
+                return {
+                    type: 'postgres' as const,
+                    host: config.get<string>('database.host'),
+                    port: config.get<number>('database.port'),
+                    username: config.get<string>('database.username'),
+                    password: config.get<string>('database.password'),
+                    database: config.get<string>('database.database'),
+                    synchronize,
+                    logging: config.get<boolean>('database.logging'),
+                    ssl: config.get<boolean>('database.ssl')
+                        ? { rejectUnauthorized: false }
+                        : false,
+                    entities: [Project, AgentSession, Span, ToolCall, TelemetryEvent, DailyAggregate],
+                    autoLoadEntities: true,
+                };
+            },
         }),
 
         // ── Redis / BullMQ ──
