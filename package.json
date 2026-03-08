@@ -24,7 +24,7 @@
     "docker:logs": "docker compose logs -f",
     "build:api": "nest build api",
     "build:mcp": "nest build mcp-server",
-    "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+    "update-ports": "ts-node scripts/update-ports.ts",
     "start": "nest start",
     "start:api": "nest start api",
     "start:api:dev": "nest start api --watch",
