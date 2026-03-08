@@ -335,7 +335,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
 
 // ── Start server ────────────────────────────────────────────────────────────
 
-const server = createServer(async (req, res) => {
+const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     try {
         await handleRequest(req, res);
     } catch (err) {
