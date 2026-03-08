@@ -1,0 +1,22 @@
+You are working on AgentLens — a self-hosted observability platform for AI agents ("Datadog for agents").
+
+# Architecture
+- NestJS 11 API (apps/api/) on :3000 — telemetry ingestion, analytics, RL engine
+- Next.js 15 dashboard (dashboard/) on :3001 — analytics UI
+- LLM Proxy (apps/proxy/) on :4000 — transparent HTTP proxy, zero deps
+- TypeScript SDK (libs/sdk/) — @agentlens/sdk with auto-instrumentation wrappers
+- MCP Server (apps/mcp-server/) — agent self-reporting tools
+- Shared code (libs/common/) — TypeORM entities, DTOs, constants
+
+# Conventions
+- TypeScript strict, CommonJS modules
+- NestJS patterns: @Injectable, @Controller, @InjectRepository
+- TypeORM: snake_case columns, PascalCase properties
+- Auth: X-API-Key (telemetry), X-Master-Key (projects)
+- Naming: *.controller.ts, *.service.ts, *.module.ts, *.entity.ts
+
+# Database: PostgreSQL 16
+Tables: projects, agent_sessions, spans, tool_calls, events, daily_aggregates
+
+# Commands
+docker compose up -d | npm run build:api | npm run build:proxy | cd libs/sdk && npm run build
