@@ -16,6 +16,7 @@ import {
     SPAN_TYPES,
     TelemetryIngestResult,
 } from '@itzvenkat0/agentlens-common';
+import { PricingService } from '../processor/pricing.service';
 
 @Injectable()
 export class IngestService {
@@ -32,6 +33,7 @@ export class IngestService {
         private readonly eventRepo: Repository<TelemetryEvent>,
         @InjectQueue(QUEUE_NAMES.TELEMETRY)
         private readonly telemetryQueue: Queue,
+        private readonly pricingService: PricingService,
     ) { }
 
     async ingestBatch(
@@ -148,9 +150,17 @@ export class IngestService {
             [sessionId],
         );
 
+        const inputTokens = parseInt(spanCounts.total_input, 10);
+        const outputTokens = parseInt(spanCounts.total_output, 10);
+
+        // Calculate dynamic USD cost based on model tokens
+        const session = await this.sessionRepo.findOne({ select: ['id', 'model'], where: { id: sessionId } });
+        const costUsd = this.pricingService.calculateCost(session?.model || null, inputTokens, outputTokens);
+
         await this.sessionRepo.update(sessionId, {
-            totalInputTokens: parseInt(spanCounts.total_input, 10),
-            totalOutputTokens: parseInt(spanCounts.total_output, 10),
+            totalInputTokens: inputTokens,
+            totalOutputTokens: outputTokens,
+            totalCostUsd: costUsd,
             toolCallsCount: parseInt(spanCounts.tool_count, 10),
             llmCallsCount: parseInt(spanCounts.llm_count, 10),
         });

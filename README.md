@@ -21,7 +21,7 @@ It captures telemetry (LLM calls, tool usage, token consumption) and turns it in
 
 - 📊 **Session traces** — See exactly what your agent did, step by step
 - 🔁 **Loop detection** — Automatically detect when agents get stuck in repetitive cycles
-- 💰 **Cost tracking** — Know how many tokens each session burns
+- 💰 **Dynamic Cost Tracking** — Instead of hardcoding AI model prices (which change constantly), AgentLens features a background NestJS `PricingService` that syncs daily via Cron with the open-source LiteLLM JSON registry. It automatically fuzzy-matches your agent's current model to its real-time cost constants and calculates accurate USD `(inputTokens * inputPrice) + (outputTokens * outputPrice)` immediately during ingestion, giving you zero-maintenance billing observability.
 - 🧠 **RL-powered insights** — Q-learning scores each tool based on real outcomes
 - 📈 **Retention** — Track how often users return to agentic workflows
 

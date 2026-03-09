@@ -5,6 +5,7 @@ import { TelemetryProcessor } from './telemetry.processor';
 import { LoopDetectorService } from './loop-detector.service';
 import { AggregationService } from './aggregation.service';
 import { RLRewardService } from './rl-reward.service';
+import { PricingService } from './pricing.service';
 import { AgentSession, Span, ToolCall, TelemetryEvent, DailyAggregate } from '@itzvenkat0/agentlens-common';
 import { QUEUE_NAMES } from '@itzvenkat0/agentlens-common';
 
@@ -13,7 +14,7 @@ import { QUEUE_NAMES } from '@itzvenkat0/agentlens-common';
         TypeOrmModule.forFeature([AgentSession, Span, ToolCall, TelemetryEvent, DailyAggregate]),
         BullModule.registerQueue({ name: QUEUE_NAMES.TELEMETRY }),
     ],
-    providers: [TelemetryProcessor, LoopDetectorService, AggregationService, RLRewardService],
-    exports: [RLRewardService],
+    providers: [TelemetryProcessor, LoopDetectorService, AggregationService, RLRewardService, PricingService],
+    exports: [RLRewardService, PricingService],
 })
 export class ProcessorModule { }

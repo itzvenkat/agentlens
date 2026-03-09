@@ -5,11 +5,13 @@ import { IngestController } from './ingest.controller';
 import { IngestService } from './ingest.service';
 import { AgentSession, Span, ToolCall, TelemetryEvent } from '@itzvenkat0/agentlens-common';
 import { QUEUE_NAMES } from '@itzvenkat0/agentlens-common';
+import { ProcessorModule } from '../processor/processor.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([AgentSession, Span, ToolCall, TelemetryEvent]),
         BullModule.registerQueue({ name: QUEUE_NAMES.TELEMETRY }),
+        ProcessorModule,
     ],
     controllers: [IngestController],
     providers: [IngestService],
