@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 import type { SessionItem } from '@/lib/api';
+import EmptyState from '@/components/EmptyState';
+import TableSkeleton from '@/components/TableSkeleton';
 
 const mockSessions: SessionItem[] = [
     { id: '1', traceId: 'trace-a8f2c1', model: 'claude-3.5-sonnet', status: 'success', totalInputTokens: 3200, totalOutputTokens: 1800, totalCostUsd: 0.038, toolCallsCount: 5, loopDetected: false, startedAt: '2026-03-07T18:30:00Z', endedAt: '2026-03-07T18:31:20Z' },
@@ -32,8 +35,15 @@ function formatDuration(start: string, end: string | null): string {
 }
 
 export default function SessionsPage() {
-    const [sessions] = useState<SessionItem[]>(mockSessions);
+    const [sessions, setSessions] = useState<SessionItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<string>('all');
+
+    useEffect(() => {
+        // Simulate network loading
+        const t = setTimeout(() => { setSessions(mockSessions); setIsLoading(false); }, 600);
+        return () => clearTimeout(t);
+    }, []);
 
     const filtered = filter === 'all'
         ? sessions
@@ -74,48 +84,62 @@ export default function SessionsPage() {
             </div>
 
             {/* ── Sessions Table ── */}
-            <div className="glass-card">
-                <div className="table-responsive">
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th>Trace ID</th>
-                                <th>Model</th>
-                                <th>Status</th>
-                                <th>Input Tokens</th>
-                                <th>Output Tokens</th>
-                                <th>Cost</th>
-                                <th>Tools</th>
-                                <th>Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered.map((s) => (
-                                <tr key={s.id}>
-                                    <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{s.traceId}</td>
-                                    <td>{s.model}</td>
-                                    <td>{getStatusBadge(s.status, s.loopDetected)}</td>
-                                    <td>{s.totalInputTokens.toLocaleString()}</td>
-                                    <td>{s.totalOutputTokens.toLocaleString()}</td>
-                                    <td>${s.totalCostUsd.toFixed(3)}</td>
-                                    <td>{s.toolCallsCount}</td>
-                                    <td style={{ color: 'var(--text-tertiary)' }}>
-                                        {formatDuration(s.startedAt, s.endedAt)}
-                                    </td>
+            {isLoading ? (
+                <TableSkeleton columns={8} rows={5} />
+            ) : sessions.length === 0 ? (
+                <EmptyState
+                    icon="🤖"
+                    title="No sessions recorded yet"
+                    description="When your AI agents run, their invocation traces will appear here. Ensure the AgentLens SDK is installed and configured correctly in your project."
+                    actionLabel="View SDK Docs"
+                    onAction={() => alert('Opening docs...')}
+                />
+            ) : (
+                <div className="glass-card">
+                    <div className="table-responsive">
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Trace ID</th>
+                                    <th>Model</th>
+                                    <th>Status</th>
+                                    <th>Input Tokens</th>
+                                    <th>Output Tokens</th>
+                                    <th>Cost</th>
+                                    <th>Tools</th>
+                                    <th>Duration / When</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                {filtered.length === 0 && (
-                    <div className="empty-state">
-                        <div className="empty-state-icon">🔍</div>
-                        <div className="empty-state-title">No sessions found</div>
-                        <p>Try adjusting your filter</p>
+                            </thead>
+                            <tbody>
+                                {filtered.map((s) => (
+                                    <tr key={s.id}>
+                                        <td style={{ fontFamily: 'monospace', fontSize: '13px', fontWeight: 500 }}>{s.traceId}</td>
+                                        <td>{s.model}</td>
+                                        <td>{getStatusBadge(s.status, s.loopDetected)}</td>
+                                        <td>{s.totalInputTokens >= 1000 ? `${(s.totalInputTokens / 1000).toFixed(1)}k` : s.totalInputTokens}</td>
+                                        <td>{s.totalOutputTokens >= 1000 ? `${(s.totalOutputTokens / 1000).toFixed(1)}k` : s.totalOutputTokens}</td>
+                                        <td>${s.totalCostUsd.toFixed(3)}</td>
+                                        <td>{s.toolCallsCount}</td>
+                                        <td>
+                                            <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{formatDuration(s.startedAt, s.endedAt)}</div>
+                                            <div style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginTop: '2px' }}>
+                                                {formatDistanceToNow(new Date(s.startedAt), { addSuffix: true })}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
-                )}
-            </div>
+
+                    {filtered.length === 0 && sessions.length > 0 && (
+                        <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                            <div style={{ fontSize: '24px', opacity: 0.5, marginBottom: '8px' }}>🔍</div>
+                            <div>No sessions match filter "{filter}"</div>
+                        </div>
+                    )}
+                </div>
+            )}
         </>
     );
 }

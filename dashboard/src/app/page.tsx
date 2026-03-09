@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 import type { Overview, RLInsight, SessionItem } from '@/lib/api';
+import TableSkeleton from '@/components/TableSkeleton';
+import EmptyState from '@/components/EmptyState';
 
 // Demo data — replaced by live API calls when backend is connected
 const mockOverview: Overview = {
@@ -58,19 +61,35 @@ function formatTokens(n: number): string {
     return String(n);
 }
 
-function timeAgo(dateStr: string): string {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
-    return `${Math.floor(hours / 24)}d ago`;
-}
-
 export default function OverviewPage() {
-    const [overview] = useState<Overview>(mockOverview);
-    const [sessions] = useState<SessionItem[]>(mockSessions);
-    const [rlInsights] = useState<RLInsight[]>(mockRLInsights);
+    const [overview, setOverview] = useState<Overview | null>(null);
+    const [sessions, setSessions] = useState<SessionItem[]>([]);
+    const [rlInsights, setRlInsights] = useState<RLInsight[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const t = setTimeout(() => {
+            setOverview(mockOverview);
+            setSessions(mockSessions);
+            setRlInsights(mockRLInsights);
+            setIsLoading(false);
+        }, 850);
+        return () => clearTimeout(t);
+    }, []);
+
+    if (isLoading || !overview) {
+        return (
+            <div style={{ paddingTop: '40px' }}>
+                <div style={{ display: 'flex', gap: '20px', marginBottom: '40px' }}>
+                    <div className="skeleton" style={{ flex: 1, height: '120px', borderRadius: '12px' }} />
+                    <div className="skeleton" style={{ flex: 1, height: '120px', borderRadius: '12px' }} />
+                    <div className="skeleton" style={{ flex: 1, height: '120px', borderRadius: '12px' }} />
+                    <div className="skeleton" style={{ flex: 1, height: '120px', borderRadius: '12px' }} />
+                </div>
+                <TableSkeleton columns={7} rows={4} />
+            </div>
+        );
+    }
 
     return (
         <>
@@ -147,40 +166,49 @@ export default function OverviewPage() {
             </div>
 
             {/* ── Recent Sessions ── */}
-            <div className="glass-card">
-                <div className="glass-card-header">
-                    <h2 className="glass-card-title">Recent Sessions</h2>
-                    <span className="glass-card-badge">Latest</span>
-                </div>
-                <div className="table-responsive">
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th>Trace</th>
-                                <th>Model</th>
-                                <th>Status</th>
-                                <th>Tokens</th>
-                                <th>Cost</th>
-                                <th>Tools</th>
-                                <th>When</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sessions.map((s) => (
-                                <tr key={s.id}>
-                                    <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{s.traceId}</td>
-                                    <td>{s.model}</td>
-                                    <td>{getStatusBadge(s.status, s.loopDetected)}</td>
-                                    <td>{formatTokens(s.totalInputTokens + s.totalOutputTokens)}</td>
-                                    <td>{formatCost(s.totalCostUsd)}</td>
-                                    <td>{s.toolCallsCount}</td>
-                                    <td style={{ color: 'var(--text-tertiary)' }}>{timeAgo(s.startedAt)}</td>
+            {sessions.length === 0 ? (
+                <EmptyState
+                    icon="🌊"
+                    title="No data flowing in"
+                    description="Your dashboard is ready, but we haven't received any agent telemetry yet. Make sure you have initialized the SDK in your agent's codebase."
+                    actionLabel="View Integration Guide"
+                />
+            ) : (
+                <div className="glass-card">
+                    <div className="glass-card-header">
+                        <h2 className="glass-card-title">Recent Sessions</h2>
+                        <span className="glass-card-badge">Latest</span>
+                    </div>
+                    <div className="table-responsive">
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Trace</th>
+                                    <th>Model</th>
+                                    <th>Status</th>
+                                    <th>Tokens</th>
+                                    <th>Cost</th>
+                                    <th>Tools</th>
+                                    <th>When</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {sessions.map((s) => (
+                                    <tr key={s.id}>
+                                        <td style={{ fontFamily: 'monospace', fontSize: '13px', fontWeight: 500 }}>{s.traceId}</td>
+                                        <td>{s.model}</td>
+                                        <td>{getStatusBadge(s.status, s.loopDetected)}</td>
+                                        <td>{formatTokens(s.totalInputTokens + s.totalOutputTokens)}</td>
+                                        <td>{formatCost(s.totalCostUsd)}</td>
+                                        <td>{s.toolCallsCount}</td>
+                                        <td style={{ color: 'var(--text-tertiary)' }}>{formatDistanceToNow(new Date(s.startedAt), { addSuffix: true })}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            )}
         </>
     );
 }
