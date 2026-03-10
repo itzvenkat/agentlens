@@ -197,10 +197,10 @@ export class IngestService {
         this.logger.log(`Session ended: ${sessionId} → ${status}`);
     }
 
-    async getInterventionStatus(traceId: string): Promise<{ status: string; hint: string | null; sessionId: string } | null> {
+    async getInterventionStatus(projectId: string, traceId: string): Promise<{ status: string; hint: string | null; sessionId: string } | null> {
         const session = await this.sessionRepo.findOne({
             select: ['id', 'interventionStatus', 'interventionHint'],
-            where: { traceId }
+            where: { traceId, projectId }
         });
 
         if (!session) return null;
@@ -212,12 +212,17 @@ export class IngestService {
         };
     }
 
-    async resolveIntervention(sessionId: string, hint: string): Promise<void> {
+    async resolveIntervention(projectId: string, sessionId: string, hint: string): Promise<void> {
+        const session = await this.sessionRepo.findOne({ where: { id: sessionId, projectId } });
+        if (!session) {
+            throw new Error('Session not found or project mismatch');
+        }
+
         await this.sessionRepo.update(sessionId, {
             interventionStatus: 'resolved',
             interventionHint: hint,
         });
 
-        this.logger.log(`Intervention resolved for session ${sessionId} with hint: "${hint}"`);
+        this.logger.log(`Intervention resolved for session ${sessionId} (Project: ${projectId}) with hint: "${hint}"`);
     }
 }

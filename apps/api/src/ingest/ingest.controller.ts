@@ -13,8 +13,11 @@ import {
 import { IngestService } from './ingest.service';
 import { IngestBatchDto, EndSessionDto } from '@itzvenkat0/agentlens-common';
 import { PiiScrubberInterceptor } from './pii-scrubber.interceptor';
+import { ApiKeyGuard } from '../auth/api-key.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Controller('v1/ingest')
+@UseGuards(ApiKeyGuard)
 @UseInterceptors(PiiScrubberInterceptor)
 export class IngestController {
     private readonly logger = new Logger(IngestController.name);
@@ -49,9 +52,9 @@ export class IngestController {
     }
 
     @Get('interventions/:traceId')
-    async getInterventionStatus(@Param('traceId') traceId: string) {
-        // Called by the LLM proxy (unauthenticated polling for speed)
-        const intervention = await this.ingestService.getInterventionStatus(traceId);
+    async getInterventionStatus(@Param('traceId') traceId: string, @Req() req: any) {
+        // Enforce project isolation: traceId must belong to the project in the API key
+        const intervention = await this.ingestService.getInterventionStatus(req.project.id, traceId);
         if (!intervention) {
             return { status: 'none', hint: null, sessionId: null };
         }
@@ -65,8 +68,7 @@ export class IngestController {
         @Body() dto: { hint: string },
         @Req() req: any
     ) {
-        // In a real production app, verify req.project matches the session's project here
-        await this.ingestService.resolveIntervention(sessionId, dto.hint);
+        await this.ingestService.resolveIntervention(req.project.id, sessionId, dto.hint);
         return { status: 'ok', message: 'Intervention resolved.' };
     }
 }

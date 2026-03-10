@@ -143,6 +143,12 @@ async function flushToAgentLens(): Promise<void> {
     const batch = [...buffer];
     buffer = [];
 
+    // Memory Safety: If the API is down and buffer is huge, we must drop oldest events
+    const PROXY_BUFFER_CAP = 10000;
+    if (buffer.length > PROXY_BUFFER_CAP) {
+        buffer = buffer.slice(-PROXY_BUFFER_CAP);
+    }
+
     try {
         await fetch(`${AGENTLENS_URL}/v1/ingest`, {
             method: 'POST',

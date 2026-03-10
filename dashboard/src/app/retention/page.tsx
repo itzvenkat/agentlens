@@ -49,7 +49,7 @@ export default function RetentionPage() {
             <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                 <div className="kpi-card">
                     <div className="kpi-label">Avg Retention Rate</div>
-                    <div className="kpi-value">{avgRetention.toFixed(1)}%</div>
+                    <div className="kpi-value">{Number(avgRetention || 0).toFixed(1)}%</div>
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Peak Active Agents</div>
@@ -150,7 +150,7 @@ export default function RetentionPage() {
                                                 />
                                             </div>
                                             <span style={{ fontSize: '12px', fontWeight: 600, color: r.retentionRate >= 70 ? 'var(--status-success)' : 'var(--status-warning)' }}>
-                                                {r.retentionRate.toFixed(1)}%
+                                                {Number(r.retentionRate || 0).toFixed(1)}%
                                             </span>
                                         </div>
                                     </td>

@@ -156,11 +156,11 @@ export class AnalyticsService {
 
         return results.map((r: any) => ({
             toolName: r.tool_name,
-            totalCalls: r.total_calls,
-            successRate: r.total_calls > 0 ? (r.success_calls / r.total_calls) * 100 : 0,
-            avgDurationMs: parseFloat(r.avg_duration_ms),
-            retryRate: r.total_calls > 0 ? (r.retry_calls / r.total_calls) * 100 : 0,
-            errorRate: r.total_calls > 0 ? (r.error_calls / r.total_calls) * 100 : 0,
+            totalCalls: Number(r.total_calls),
+            successRate: r.total_calls > 0 ? (Number(r.success_calls) / Number(r.total_calls)) * 100 : 0,
+            avgDurationMs: parseFloat(r.avg_duration_ms) || 0,
+            retryRate: r.total_calls > 0 ? (Number(r.retry_calls) / Number(r.total_calls)) * 100 : 0,
+            errorRate: r.total_calls > 0 ? (Number(r.error_calls) / Number(r.total_calls)) * 100 : 0,
         }));
     }
 

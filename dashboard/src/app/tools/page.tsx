@@ -76,7 +76,7 @@ export default function ToolsPage() {
                                         {tool.toolName}
                                     </div>
                                     <div style={{ fontSize: '28px', fontWeight: 800, color: getEfficiencyColor(tool.successRate), marginBottom: '4px' }}>
-                                        {tool.successRate.toFixed(1)}%
+                                        {Number(tool.successRate || 0).toFixed(1)}%
                                     </div>
                                     <div style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
                                         {tool.totalCalls} calls · {tool.avgDurationMs}ms avg
@@ -119,14 +119,14 @@ export default function ToolsPage() {
                                             <td style={{ fontWeight: 500 }}>{tool.toolName}</td>
                                             <td>{tool.totalCalls}</td>
                                             <td style={{ color: getEfficiencyColor(tool.successRate), fontWeight: 600 }}>
-                                                {tool.successRate.toFixed(1)}%
+                                                {Number(tool.successRate || 0).toFixed(1)}%
                                             </td>
-                                            <td>{tool.avgDurationMs >= 1000 ? `${(tool.avgDurationMs / 1000).toFixed(1)}s` : `${tool.avgDurationMs}ms`}</td>
+                                            <td>{Number(tool.avgDurationMs || 0) >= 1000 ? `${(Number(tool.avgDurationMs || 0) / 1000).toFixed(1)}s` : `${tool.avgDurationMs}ms`}</td>
                                             <td style={{ color: tool.retryRate > 10 ? 'var(--status-warning)' : 'var(--text-secondary)' }}>
-                                                {tool.retryRate.toFixed(1)}%
+                                                {Number(tool.retryRate || 0).toFixed(1)}%
                                             </td>
                                             <td style={{ color: tool.errorRate > 15 ? 'var(--status-error)' : 'var(--text-secondary)' }}>
-                                                {tool.errorRate.toFixed(1)}%
+                                                {Number(tool.errorRate || 0).toFixed(1)}%
                                             </td>
                                             <td>
                                                 {tool.successRate >= 90 ? '🟢' : tool.successRate >= 70 ? '🟡' : '🔴'}
