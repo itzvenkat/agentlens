@@ -97,7 +97,7 @@ export default function OverviewPage() {
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Success Rate</div>
-                    <div className="kpi-value">{overview.successRate.toFixed(1)}%</div>
+                    <div className="kpi-value">{Number(overview.successRate || 0).toFixed(1)}%</div>
                     {typeof overview.successRateChange === 'number' && overview.successRateChange !== 0 ? (
                         <div className={`kpi-change ${overview.successRateChange > 0 ? 'positive' : 'negative'}`}>
                             {overview.successRateChange > 0 ? '↑' : '↓'} {Math.abs(overview.successRateChange).toFixed(1)}% vs previous
@@ -106,7 +106,7 @@ export default function OverviewPage() {
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Cost per Success</div>
-                    <div className="kpi-value">{formatCost(overview.avgCostPerSuccess)}</div>
+                    <div className="kpi-value">{formatCost(overview.avgCostPerSuccess || 0)}</div>
                     {typeof overview.costPerSuccessChange === 'number' && overview.costPerSuccessChange !== 0 ? (
                         <div className={`kpi-change ${overview.costPerSuccessChange <= 0 ? 'positive' : 'negative'}`}>
                             {overview.costPerSuccessChange <= 0 ? '↓' : '↑'} ${Math.abs(overview.costPerSuccessChange).toFixed(3)} vs previous
@@ -115,7 +115,7 @@ export default function OverviewPage() {
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Loop Detection Rate</div>
-                    <div className="kpi-value">{overview.loopDetectionRate.toFixed(1)}%</div>
+                    <div className="kpi-value">{Number(overview.loopDetectionRate || 0).toFixed(1)}%</div>
                     {typeof overview.loopDetectionRateChange === 'number' && overview.loopDetectionRateChange !== 0 ? (
                         <div className={`kpi-change ${overview.loopDetectionRateChange <= 0 ? 'positive' : 'negative'}`}>
                             {overview.loopDetectionRateChange <= 0 ? '↓' : '↑'} {Math.abs(overview.loopDetectionRateChange).toFixed(1)}% vs previous
@@ -136,7 +136,7 @@ export default function OverviewPage() {
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Avg Tools / Session</div>
-                    <div className="kpi-value">{overview.avgToolsPerSession.toFixed(1)}</div>
+                    <div className="kpi-value">{Number(overview.avgToolsPerSession || 0).toFixed(1)}</div>
                 </div>
             </div>
 
@@ -149,7 +149,7 @@ export default function OverviewPage() {
                 {rlInsights.map((insight) => (
                     <div key={insight.toolName} className="rl-insight">
                         <div className={`rl-q-value ${getQValueClass(insight.qValue)}`}>
-                            {insight.qValue.toFixed(2)}
+                            {Number(insight.qValue || 0).toFixed(2)}
                         </div>
                         <div className="rl-detail">
                             <div className="rl-tool-name">{insight.toolName}</div>
@@ -160,7 +160,7 @@ export default function OverviewPage() {
                                 {insight.actionCount} calls
                             </div>
                             <div style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
-                                Avg reward: {insight.avgReward.toFixed(2)}
+                                Avg reward: {Number(insight.avgReward || 0).toFixed(2)}
                             </div>
                         </div>
                     </div>
@@ -199,7 +199,7 @@ export default function OverviewPage() {
                                 {sessions.map((s) => (
                                     <tr key={s.id}>
                                         <td style={{ fontFamily: 'monospace', fontSize: '13px', fontWeight: 500 }}>{s.traceId}</td>
-                                        <td>{s.model}</td>
+                                        <td>{s.model || 'Unknown'}</td>
                                         <td>{getStatusBadge(s.status, s.loopDetected)}</td>
                                         <td>{formatTokens(s.totalInputTokens + s.totalOutputTokens)}</td>
                                         <td>{formatCost(s.totalCostUsd)}</td>

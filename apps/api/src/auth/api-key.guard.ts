@@ -37,9 +37,14 @@ export class ApiKeyGuard implements CanActivate {
         const masterKey = process.env.AGENTLENS_MASTER_KEY || 'agentlens_master_dev_key';
 
         if (apiKey === masterKey) {
-            // DEV BYPASS: Allow test scripts to flow through
-            request.project = { id: '00000000-0000-0000-0000-000000000000', name: 'Test' };
-            return true;
+            // DEV BYPASS: Use the first available project
+            const firstProject = await this.projectRepo.findOne({ where: { isActive: true }, order: { createdAt: 'ASC' } });
+            if (firstProject) {
+                request.project = firstProject;
+                return true;
+            }
+            // Fallback if no projects exist (unlikely in dev)
+            this.logger.warn('Master key used but no active projects found in database.');
         }
 
         // Hash the provided key and look up by hash

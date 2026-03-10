@@ -208,7 +208,7 @@ export class RLRewardService {
             toolName: entry.toolName,
             qValue: Math.max(0, Math.min(1, (entry.qValue + 1) / 2)), // Normalize to 0-1
             actionCount: entry.actionCount,
-            avgReward: entry.avgReward,
+            avgReward: Number(entry.avgReward),
             recommendation: this.generateRecommendation(entry),
         }));
     }

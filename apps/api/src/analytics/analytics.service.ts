@@ -109,7 +109,7 @@ export class AnalyticsService {
                 status: s.status,
                 totalInputTokens: s.totalInputTokens,
                 totalOutputTokens: s.totalOutputTokens,
-                totalCostUsd: s.totalCostUsd,
+                totalCostUsd: Number(s.totalCostUsd),
                 toolCallsCount: s.toolCallsCount,
                 loopDetected: s.loopDetected,
                 startedAt: s.startedAt,

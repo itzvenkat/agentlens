@@ -155,11 +155,11 @@ export default function SessionsPage() {
                                 {filtered.map((s) => (
                                     <tr key={s.id}>
                                         <td style={{ fontFamily: 'monospace', fontSize: '13px', fontWeight: 500 }}>{s.traceId}</td>
-                                        <td>{s.model}</td>
+                                        <td>{s.model || 'Unknown'}</td>
                                         <td>{getStatusBadge(s.status, s.loopDetected)}</td>
                                         <td>{s.totalInputTokens >= 1000 ? `${(s.totalInputTokens / 1000).toFixed(1)}k` : s.totalInputTokens}</td>
                                         <td>{s.totalOutputTokens >= 1000 ? `${(s.totalOutputTokens / 1000).toFixed(1)}k` : s.totalOutputTokens}</td>
-                                        <td>${s.totalCostUsd.toFixed(3)}</td>
+                                        <td>${Number(s.totalCostUsd || 0).toFixed(3)}</td>
                                         <td>{s.toolCallsCount}</td>
                                         <td>
                                             <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{formatDuration(s.startedAt, s.endedAt)}</div>
