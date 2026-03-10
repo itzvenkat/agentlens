@@ -16,7 +16,7 @@ export default function RetentionPage() {
     useEffect(() => {
         const fetchRetention = async () => {
             try {
-                const res = await api.getRetention({ apiKey: 'agentlens_master_dev_key', days: 14 });
+                const res = await api.getRetention({ days: 14 });
                 setRetention(res);
             } catch (err) {
                 console.error('Failed to fetch retention:', err);

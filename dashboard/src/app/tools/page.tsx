@@ -24,7 +24,7 @@ export default function ToolsPage() {
     useEffect(() => {
         const fetchTools = async () => {
             try {
-                const res = await api.getToolEfficiency({ apiKey: 'agentlens_master_dev_key' });
+                const res = await api.getToolEfficiency();
                 setTools(res);
             } catch (err) {
                 console.error('Failed to fetch tool efficiency:', err);

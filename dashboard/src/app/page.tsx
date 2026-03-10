@@ -43,7 +43,7 @@ export default function OverviewPage() {
         const loadDashboard = async () => {
             setIsLoading(true);
             try {
-                const opts = { apiKey: 'agentlens_master_dev_key' };
+                const opts = {};
                 const [overviewRes, sessionsRes, insightsRes] = await Promise.all([
                     api.getOverview(opts),
                     api.getSessions({ ...opts, page: 1, pageSize: 6 }), // Only latest 6 for overview

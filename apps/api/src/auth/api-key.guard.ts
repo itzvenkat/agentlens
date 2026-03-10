@@ -34,7 +34,9 @@ export class ApiKeyGuard implements CanActivate {
             throw new UnauthorizedException('Missing X-API-Key header');
         }
 
-        if (apiKey === 'agentlens_master_dev_key') {
+        const masterKey = process.env.AGENTLENS_MASTER_KEY || 'agentlens_master_dev_key';
+
+        if (apiKey === masterKey) {
             // DEV BYPASS: Allow test scripts to flow through
             request.project = { id: '00000000-0000-0000-0000-000000000000', name: 'Test' };
             return true;

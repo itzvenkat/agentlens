@@ -34,6 +34,7 @@ export default function SessionsPage() {
     const [interventionTrace, setInterventionTrace] = useState<SessionItem | null>(null);
     const [hintText, setHintText] = useState('');
     const [isResolving, setIsResolving] = useState(false);
+    const [resolveError, setResolveError] = useState<string | null>(null);
 
     const fetchSessions = async () => {
         setIsLoading(true);
@@ -48,7 +49,6 @@ export default function SessionsPage() {
             }
 
             const res = await api.getSessions({
-                apiKey: 'agentlens_master_dev_key',
                 page,
                 pageSize: 20,
                 params
@@ -75,8 +75,9 @@ export default function SessionsPage() {
     const handleResolve = async () => {
         if (!interventionTrace || !hintText.trim()) return;
         setIsResolving(true);
+        setResolveError(null);
         try {
-            await api.resolveIntervention(interventionTrace.id, hintText, { apiKey: 'agentlens_master_dev_key' });
+            await api.resolveIntervention(interventionTrace.id, hintText);
 
             // Update UI speculatively
             setSessions(prev => prev.map(s => s.id === interventionTrace.id ? { ...s, loopDetected: false, status: 'active' } : s));
@@ -84,7 +85,7 @@ export default function SessionsPage() {
             setHintText('');
         } catch (err) {
             console.error('Failed to resolve intervention:', err);
-            alert('Failed to steer agent: ' + (err as Error).message);
+            setResolveError((err as Error).message || 'Failed to steer agent.');
         } finally {
             setIsResolving(false);
         }
@@ -270,6 +271,16 @@ export default function SessionsPage() {
                                 }}
                             />
                         </div>
+
+                        {resolveError && (
+                            <div style={{ marginBottom: '16px', padding: '12px 16px', background: 'rgba(244, 63, 94, 0.15)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '8px', color: 'var(--status-error)', fontSize: '13px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                <span style={{ fontSize: '16px' }}>⚠️</span>
+                                <div>
+                                    <strong style={{ display: 'block', marginBottom: '4px' }}>Intervention Failed</strong>
+                                    {resolveError}
+                                </div>
+                            </div>
+                        )}
 
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                             <button

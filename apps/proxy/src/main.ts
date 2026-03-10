@@ -215,7 +215,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
             try {
                 // Poll AgentLens backend for the active trace trap status
                 const res = await fetch(`${AGENTLENS_URL}/v1/interventions/${traceId}`, {
-                    headers: { 'X-API-Key': AGENTLENS_KEY || 'agentlens_master_dev_key' }
+                    headers: { 'X-API-Key': AGENTLENS_KEY }
                 });
                 if (res.ok) {
                     const data = await res.json();

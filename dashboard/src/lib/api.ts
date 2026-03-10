@@ -1,19 +1,21 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9471';
 
 export interface FetchOptions {
-    apiKey: string;
+    apiKey?: string;
     params?: Record<string, string>;
 }
 
-async function apiFetch<T>(path: string, options: FetchOptions): Promise<T> {
+async function apiFetch<T>(path: string, options?: FetchOptions): Promise<T> {
     const url = new URL(`${API_URL}${path}`);
-    if (options.params) {
+    if (options?.params) {
         Object.entries(options.params).forEach(([k, v]) => url.searchParams.set(k, v));
     }
 
+    const resolvedApiKey = options?.apiKey || process.env.NEXT_PUBLIC_API_KEY || 'agentlens_master_dev_key';
+
     const res = await fetch(url.toString(), {
         headers: {
-            'X-API-Key': options.apiKey,
+            'X-API-Key': resolvedApiKey,
             'Content-Type': 'application/json',
         },
         cache: 'no-store',
@@ -90,32 +92,32 @@ export interface RLInsight {
 }
 
 export const api = {
-    getOverview: (opts: FetchOptions) =>
+    getOverview: (opts?: FetchOptions) =>
         apiFetch<Overview>('/v1/analytics/overview', opts),
 
-    getSessions: (opts: FetchOptions & { page?: number; pageSize?: number }) =>
+    getSessions: (opts?: FetchOptions & { page?: number; pageSize?: number }) =>
         apiFetch<PaginatedSessions>('/v1/analytics/sessions', {
             ...opts,
             params: {
-                ...opts.params,
-                page: String(opts.page || 1),
-                pageSize: String(opts.pageSize || 20),
+                ...opts?.params,
+                page: String(opts?.page || 1),
+                pageSize: String(opts?.pageSize || 20),
             },
         }),
 
-    getToolEfficiency: (opts: FetchOptions) =>
+    getToolEfficiency: (opts?: FetchOptions) =>
         apiFetch<ToolEfficiency[]>('/v1/analytics/tools', opts),
 
-    getRetention: (opts: FetchOptions & { days?: number }) =>
+    getRetention: (opts?: FetchOptions & { days?: number }) =>
         apiFetch<RetentionPoint[]>('/v1/analytics/retention', {
             ...opts,
-            params: { ...opts.params, days: String(opts.days || 30) },
+            params: { ...opts?.params, days: String(opts?.days || 30) },
         }),
 
-    getRLInsights: (opts: FetchOptions) =>
+    getRLInsights: (opts?: FetchOptions) =>
         apiFetch<RLInsight[]>('/v1/analytics/rl-insights', opts),
 
-    resolveIntervention: (sessionId: string, hint: string, opts: FetchOptions) =>
+    resolveIntervention: (sessionId: string, hint: string, opts?: FetchOptions) =>
         apiFetch<{ status: string; message: string }>(`/v1/interventions/resolve/${sessionId}`, {
             ...opts,
             params: undefined, // ensure no query params leak into the POST payload
