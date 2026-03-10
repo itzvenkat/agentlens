@@ -28,7 +28,7 @@ interface ProviderConfig {
     name: string;
     upstream: string;
     extractUsage: (body: any) => { inputTokens?: number; outputTokens?: number };
-    extractModel: (reqBody: any, resBody: any) => string;
+    extractModel: (reqBody: any, resBody: any, url?: string) => string;
     extractToolCalls: (resBody: any) => Array<{ name: string; input?: any }>;
 }
 
@@ -80,7 +80,15 @@ const PROVIDERS: Record<string, ProviderConfig> = {
             inputTokens: res?.usageMetadata?.promptTokenCount,
             outputTokens: res?.usageMetadata?.candidatesTokenCount,
         }),
-        extractModel: (req) => req?.model || 'unknown',
+        extractModel: (req, res, url) => {
+            // Google model can be in req.model OR in the URL: .../models/{model}:generateContent
+            if (req?.model) return req.model;
+            if (url) {
+                const match = url.match(/\/models\/([^:]+)/);
+                if (match) return match[1];
+            }
+            return res?.model || 'unknown-gemini';
+        },
         extractToolCalls: () => [],
     },
     ollama: {
@@ -97,10 +105,20 @@ const PROVIDERS: Record<string, ProviderConfig> = {
 
 // ── Detect provider from request headers ────────────────────────────────────
 
-function detectProvider(headers: IncomingMessage['headers']): ProviderConfig {
+function detectProvider(headers: IncomingMessage['headers'], url?: string): ProviderConfig {
     // Check for Anthropic-specific headers
     if (headers['x-api-key'] && headers['anthropic-version']) {
         return PROVIDERS.anthropic;
+    }
+
+    // Check for Google-specific headers
+    if (headers['x-goog-api-key'] || headers['x-goog-api-client']) {
+        return PROVIDERS.google;
+    }
+
+    // Check for Google URL pattern
+    if (url?.includes('generativelanguage.googleapis.com') || url?.includes('/models/gemini')) {
+        return PROVIDERS.google;
     }
 
     // Check for X-AgentLens-Provider header (explicit override)
@@ -189,7 +207,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
         return;
     }
 
-    const provider = detectProvider(req.headers);
+    const provider = detectProvider(req.headers, req.url || '');
     const upstream = process.env.UPSTREAM_BASE_URL || provider.upstream;
     const upstreamUrl = `${upstream}${req.url}`;
     const start = Date.now();
@@ -272,7 +290,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
             // For streaming: pipe through and log basic span (no token extraction)
             res.writeHead(upstreamRes.status, Object.fromEntries(upstreamRes.headers.entries()));
 
-            const model = provider.extractModel(reqBody, null);
+            const model = provider.extractModel(reqBody, null, req.url || '');
             buffer.push({
                 traceId,
                 spanId,
@@ -312,7 +330,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
             }
 
             const usage = provider.extractUsage(resBody);
-            const model = provider.extractModel(reqBody, resBody);
+            const model = provider.extractModel(reqBody, resBody, req.url || '');
             const toolCalls = provider.extractToolCalls(resBody);
 
             // Record LLM span

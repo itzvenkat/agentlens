@@ -66,9 +66,19 @@ export class IngestService {
             this.logger.log(`New session created: ${session.id} (trace: ${traceId})`);
         }
 
-        // Persist spans
+        // Persist spans and update session model if null/Unknown
         for (const spanDto of dto.spans) {
             try {
+                // Dynamic model enrichment: if session has no model, attempt to take it from the span
+                if ((!session.model || session.model === 'Unknown') && spanDto.model) {
+                    session.model = spanDto.model;
+                    session.provider = spanDto.provider || session.provider;
+                    await this.sessionRepo.update(session.id, {
+                        model: session.model,
+                        provider: session.provider
+                    });
+                }
+
                 const span = await this.persistSpan(session.id, spanDto);
 
                 // If it's a tool span, also persist tool call record
