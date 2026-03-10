@@ -1,21 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import type { RetentionPoint } from '@/lib/api';
-
-const mockRetention: RetentionPoint[] = Array.from({ length: 14 }, (_, i) => {
-    const date = new Date(2026, 2, 7 - 13 + i);
-    const base = 35 + Math.floor(Math.random() * 20);
-    const sessions = base + Math.floor(Math.random() * 40);
-    const returning = Math.floor(base * (0.5 + Math.random() * 0.3));
-    return {
-        date: date.toISOString().split('T')[0],
-        uniqueAgents: base,
-        totalSessions: sessions,
-        returningAgents: returning,
-        retentionRate: (returning / base) * 100,
-    };
-});
+import { useState, useEffect } from 'react';
+import { api, type RetentionPoint } from '@/lib/api';
+import TableSkeleton from '@/components/TableSkeleton';
 
 function formatDate(dateStr: string): string {
     const d = new Date(dateStr);
@@ -23,9 +10,33 @@ function formatDate(dateStr: string): string {
 }
 
 export default function RetentionPage() {
-    const [retention] = useState<RetentionPoint[]>(mockRetention);
-    const maxSessions = Math.max(...retention.map((r) => r.totalSessions));
-    const avgRetention = retention.reduce((sum, r) => sum + r.retentionRate, 0) / retention.length;
+    const [retention, setRetention] = useState<RetentionPoint[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchRetention = async () => {
+            try {
+                const res = await api.getRetention({ apiKey: 'agentlens_master_dev_key', days: 14 });
+                setRetention(res);
+            } catch (err) {
+                console.error('Failed to fetch retention:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchRetention();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div style={{ paddingTop: '40px' }}>
+                <TableSkeleton columns={5} rows={14} />
+            </div>
+        );
+    }
+    const maxSessions = retention.length > 0 ? Math.max(...retention.map((r) => r.totalSessions)) : 0;
+    const avgRetention = retention.length > 0 ? retention.reduce((sum, r) => sum + r.retentionRate, 0) / retention.length : 0;
+    const peakAgents = retention.length > 0 ? Math.max(...retention.map((r) => r.uniqueAgents)) : 0;
 
     return (
         <>
@@ -42,7 +53,7 @@ export default function RetentionPage() {
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Peak Active Agents</div>
-                    <div className="kpi-value">{Math.max(...retention.map((r) => r.uniqueAgents))}</div>
+                    <div className="kpi-value">{peakAgents}</div>
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Total Sessions (14d)</div>
@@ -66,7 +77,7 @@ export default function RetentionPage() {
                                 style={{
                                     width: '100%',
                                     maxWidth: '40px',
-                                    height: `${(r.totalSessions / maxSessions) * 180}px`,
+                                    height: `${maxSessions > 0 ? (r.totalSessions / maxSessions) * 180 : 0}px`,
                                     borderRadius: '6px 6px 2px 2px',
                                     background: `linear-gradient(180deg, var(--accent-primary) 0%, var(--accent-secondary) 100%)`,
                                     opacity: 0.6 + (r.retentionRate / 100) * 0.4,

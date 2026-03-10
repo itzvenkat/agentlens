@@ -28,7 +28,7 @@ export class AnalyticsService {
         private readonly aggregateRepo: Repository<DailyAggregate>,
     ) { }
 
-    async getOverview(projectId: string, from: Date, to: Date): Promise<OverviewDto> {
+    private async getOverviewStats(projectId: string, from: Date, to: Date) {
         const [result] = await this.sessionRepo.query(
             `SELECT
         COUNT(*)::int as total_sessions,
@@ -59,13 +59,43 @@ export class AnalyticsService {
         };
     }
 
+    async getOverview(projectId: string, from: Date, to: Date): Promise<OverviewDto> {
+        const current = await this.getOverviewStats(projectId, from, to);
+
+        // Compute metrics for the equal preceding time period
+        const periodMs = to.getTime() - from.getTime();
+        const prevFrom = new Date(from.getTime() - periodMs);
+        const prevTo = new Date(from.getTime() - 1); // Up to the millisecond before 'from'
+
+        const prev = await this.getOverviewStats(projectId, prevFrom, prevTo);
+
+        // Rate computations vs previous period
+        const totalSessionsChange = prev.totalSessions > 0
+            ? ((current.totalSessions - prev.totalSessions) / prev.totalSessions) * 100
+            : 0;
+
+        return {
+            ...current,
+            totalSessionsChange,
+            successRateChange: current.successRate - prev.successRate,
+            costPerSuccessChange: current.avgCostPerSuccess - prev.avgCostPerSuccess,
+            loopDetectionRateChange: current.loopDetectionRate - prev.loopDetectionRate,
+        };
+    }
+
     async getSessions(
         projectId: string,
         page: number,
         pageSize: number,
+        status?: string,
+        loopDetected?: boolean,
     ): Promise<PaginatedResult<SessionListItemDto>> {
+        const whereClause: any = { projectId };
+        if (status) whereClause.status = status;
+        if (loopDetected) whereClause.loopDetected = true;
+
         const [sessions, total] = await this.sessionRepo.findAndCount({
-            where: { projectId },
+            where: whereClause,
             order: { startedAt: 'DESC' },
             skip: (page - 1) * pageSize,
             take: pageSize,

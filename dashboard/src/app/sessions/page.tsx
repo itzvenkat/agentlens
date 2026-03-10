@@ -6,17 +6,6 @@ import { api, type SessionItem } from '@/lib/api';
 import EmptyState from '@/components/EmptyState';
 import TableSkeleton from '@/components/TableSkeleton';
 
-const mockSessions: SessionItem[] = [
-    { id: '1', traceId: 'trace-a8f2c1', model: 'claude-3.5-sonnet', status: 'success', totalInputTokens: 3200, totalOutputTokens: 1800, totalCostUsd: 0.038, toolCallsCount: 5, loopDetected: false, startedAt: '2026-03-07T18:30:00Z', endedAt: '2026-03-07T18:31:20Z' },
-    { id: '2', traceId: 'trace-b3c7d2', model: 'gpt-4o', status: 'failure', totalInputTokens: 8400, totalOutputTokens: 4200, totalCostUsd: 0.126, toolCallsCount: 12, loopDetected: true, startedAt: '2026-03-07T17:45:00Z', endedAt: '2026-03-07T17:48:30Z' },
-    { id: '3', traceId: 'trace-c1d9e3', model: 'claude-3.5-sonnet', status: 'success', totalInputTokens: 1500, totalOutputTokens: 900, totalCostUsd: 0.018, toolCallsCount: 3, loopDetected: false, startedAt: '2026-03-07T16:20:00Z', endedAt: '2026-03-07T16:20:45Z' },
-    { id: '4', traceId: 'trace-d4e2f4', model: 'gpt-4o-mini', status: 'success', totalInputTokens: 2100, totalOutputTokens: 1200, totalCostUsd: 0.005, toolCallsCount: 4, loopDetected: false, startedAt: '2026-03-07T15:10:00Z', endedAt: '2026-03-07T15:11:00Z' },
-    { id: '5', traceId: 'trace-e5f3g5', model: 'claude-3.5-sonnet', status: 'loop_detected', totalInputTokens: 15000, totalOutputTokens: 8000, totalCostUsd: 0.174, toolCallsCount: 18, loopDetected: true, startedAt: '2026-03-07T14:00:00Z', endedAt: '2026-03-07T14:05:00Z' },
-    { id: '6', traceId: 'trace-f6g4h6', model: 'gpt-4o', status: 'success', totalInputTokens: 4500, totalOutputTokens: 2300, totalCostUsd: 0.068, toolCallsCount: 7, loopDetected: false, startedAt: '2026-03-07T13:30:00Z', endedAt: '2026-03-07T13:32:00Z' },
-    { id: '7', traceId: 'trace-g7h5i7', model: 'claude-3.5-haiku', status: 'success', totalInputTokens: 800, totalOutputTokens: 400, totalCostUsd: 0.003, toolCallsCount: 2, loopDetected: false, startedAt: '2026-03-07T12:15:00Z', endedAt: '2026-03-07T12:15:30Z' },
-    { id: '8', traceId: 'trace-h8i6j8', model: 'gpt-4o', status: 'failure', totalInputTokens: 6200, totalOutputTokens: 3100, totalCostUsd: 0.093, toolCallsCount: 9, loopDetected: false, startedAt: '2026-03-07T11:00:00Z', endedAt: '2026-03-07T11:03:00Z' },
-];
-
 function getStatusBadge(status: string, loopDetected: boolean) {
     if (loopDetected) return <span className="badge badge-loop">Loop</span>;
     switch (status) {
@@ -38,23 +27,50 @@ export default function SessionsPage() {
     const [sessions, setSessions] = useState<SessionItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<string>('all');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     // Intervention Modal State
     const [interventionTrace, setInterventionTrace] = useState<SessionItem | null>(null);
     const [hintText, setHintText] = useState('');
     const [isResolving, setIsResolving] = useState(false);
 
-    useEffect(() => {
-        // Simulate network loading
-        const t = setTimeout(() => { setSessions(mockSessions); setIsLoading(false); }, 600);
-        return () => clearTimeout(t);
-    }, []);
+    const fetchSessions = async () => {
+        setIsLoading(true);
+        try {
+            const params: Record<string, string> = {};
+            if (filter !== 'all') {
+                if (filter === 'loops') {
+                    params.loopDetected = 'true';
+                } else {
+                    params.status = filter;
+                }
+            }
 
-    const filtered = filter === 'all'
-        ? sessions
-        : sessions.filter((s) =>
-            filter === 'loops' ? s.loopDetected : s.status === filter
-        );
+            const res = await api.getSessions({
+                apiKey: 'agentlens_master_dev_key',
+                page,
+                pageSize: 20,
+                params
+            });
+            setSessions(res.data);
+            setTotalPages(res.totalPages || 1);
+        } catch (err) {
+            console.error('Failed to fetch sessions:', err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSessions();
+    }, [page, filter]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [filter]);
+
+    const filtered = sessions;
 
     const handleResolve = async () => {
         if (!interventionTrace || !hintText.trim()) return;
@@ -115,7 +131,7 @@ export default function SessionsPage() {
                     title="No sessions recorded yet"
                     description="When your AI agents run, their invocation traces will appear here. Ensure the AgentLens SDK is installed and configured correctly in your project."
                     actionLabel="View SDK Docs"
-                    onAction={() => alert('Opening docs...')}
+                    onAction={() => window.open('https://github.com/itzvenkat/agentlens/tree/main/docs/wiki', '_blank')}
                 />
             ) : (
                 <div className="glass-card">
@@ -166,8 +182,7 @@ export default function SessionsPage() {
                                                         boxShadow: '0 2px 8px rgba(249, 115, 22, 0.4)',
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        gap: '6px',
-                                                        animation: 'pulse 2s infinite'
+                                                        gap: '6px'
                                                     }}
                                                 >
                                                     <span>🚨</span> Halt & Steer
@@ -180,10 +195,39 @@ export default function SessionsPage() {
                         </table>
                     </div>
 
-                    {filtered.length === 0 && sessions.length > 0 && (
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderTop: '1px solid var(--bg-glass-border)' }}>
+                            <button
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                disabled={page === 1}
+                                style={{
+                                    padding: '6px 14px', background: 'var(--bg-tertiary)', border: '1px solid var(--bg-glass-border)',
+                                    color: page === 1 ? 'var(--text-muted)' : 'var(--text-primary)', borderRadius: '6px', cursor: page === 1 ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 500
+                                }}
+                            >
+                                Previous
+                            </button>
+                            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                Page <strong style={{ color: 'var(--text-primary)' }}>{page}</strong> of {totalPages}
+                            </span>
+                            <button
+                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                disabled={page === totalPages}
+                                style={{
+                                    padding: '6px 14px', background: 'var(--bg-tertiary)', border: '1px solid var(--bg-glass-border)',
+                                    color: page === totalPages ? 'var(--text-muted)' : 'var(--text-primary)', borderRadius: '6px', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 500
+                                }}
+                            >
+                                Next
+                            </button>
+                        </div>
+                    )}
+
+                    {filtered.length === 0 && sessions.length === 0 && (
                         <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-secondary)' }}>
                             <div style={{ fontSize: '24px', opacity: 0.5, marginBottom: '8px' }}>🔍</div>
-                            <div>No sessions match filter "{filter}"</div>
+                            <div>No sessions found for this active filter.</div>
                         </div>
                     )}
                 </div>

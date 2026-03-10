@@ -2,37 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import type { Overview, RLInsight, SessionItem } from '@/lib/api';
+import { api, type Overview, type RLInsight, type SessionItem } from '@/lib/api';
 import TableSkeleton from '@/components/TableSkeleton';
 import EmptyState from '@/components/EmptyState';
-
-// Demo data — replaced by live API calls when backend is connected
-const mockOverview: Overview = {
-    totalSessions: 1_247,
-    successRate: 73.2,
-    avgCostPerSession: 0.042,
-    avgCostPerSuccess: 0.058,
-    totalTokens: 2_847_391,
-    totalCostUsd: 52.38,
-    loopDetectionRate: 8.7,
-    avgToolsPerSession: 4.3,
-};
-
-const mockSessions: SessionItem[] = [
-    { id: '1', traceId: 'trace-a8f2', model: 'claude-3.5-sonnet', status: 'success', totalInputTokens: 3200, totalOutputTokens: 1800, totalCostUsd: 0.038, toolCallsCount: 5, loopDetected: false, startedAt: '2026-03-07T18:30:00Z', endedAt: '2026-03-07T18:31:20Z' },
-    { id: '2', traceId: 'trace-b3c7', model: 'gpt-4o', status: 'failure', totalInputTokens: 8400, totalOutputTokens: 4200, totalCostUsd: 0.126, toolCallsCount: 12, loopDetected: true, startedAt: '2026-03-07T17:45:00Z', endedAt: '2026-03-07T17:48:30Z' },
-    { id: '3', traceId: 'trace-c1d9', model: 'claude-3.5-sonnet', status: 'success', totalInputTokens: 1500, totalOutputTokens: 900, totalCostUsd: 0.018, toolCallsCount: 3, loopDetected: false, startedAt: '2026-03-07T16:20:00Z', endedAt: '2026-03-07T16:20:45Z' },
-    { id: '4', traceId: 'trace-d4e2', model: 'gpt-4o-mini', status: 'success', totalInputTokens: 2100, totalOutputTokens: 1200, totalCostUsd: 0.005, toolCallsCount: 4, loopDetected: false, startedAt: '2026-03-07T15:10:00Z', endedAt: '2026-03-07T15:11:00Z' },
-    { id: '5', traceId: 'trace-e5f3', model: 'claude-3.5-sonnet', status: 'loop_detected', totalInputTokens: 15000, totalOutputTokens: 8000, totalCostUsd: 0.174, toolCallsCount: 18, loopDetected: true, startedAt: '2026-03-07T14:00:00Z', endedAt: '2026-03-07T14:05:00Z' },
-];
-
-const mockRLInsights: RLInsight[] = [
-    { toolName: 'read_file', qValue: 0.87, actionCount: 342, avgReward: 0.82, recommendation: 'High value — agents using this tool first have 23% higher success rates' },
-    { toolName: 'search_codebase', qValue: 0.74, actionCount: 256, avgReward: 0.71, recommendation: 'Effective when paired with read_file. Avoid using more than 3x per session' },
-    { toolName: 'run_terminal', qValue: 0.61, actionCount: 189, avgReward: 0.58, recommendation: 'Moderate value — consider adding timeout guards to reduce loop risk' },
-    { toolName: 'write_file', qValue: 0.52, actionCount: 298, avgReward: 0.49, recommendation: 'Often triggers retry loops when used without prior read_file. Suggest enforcing read-before-write' },
-    { toolName: 'browser_action', qValue: 0.31, actionCount: 74, avgReward: 0.28, recommendation: 'Low efficiency — 47% of calls result in errors. Consider deprecating or adding better error handling' },
-];
 
 function getStatusBadge(status: string, loopDetected: boolean) {
     if (loopDetected) return <span className="badge badge-loop">Loop</span>;
@@ -68,13 +40,27 @@ export default function OverviewPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const t = setTimeout(() => {
-            setOverview(mockOverview);
-            setSessions(mockSessions);
-            setRlInsights(mockRLInsights);
-            setIsLoading(false);
-        }, 850);
-        return () => clearTimeout(t);
+        const loadDashboard = async () => {
+            setIsLoading(true);
+            try {
+                const opts = { apiKey: 'agentlens_master_dev_key' };
+                const [overviewRes, sessionsRes, insightsRes] = await Promise.all([
+                    api.getOverview(opts),
+                    api.getSessions({ ...opts, page: 1, pageSize: 6 }), // Only latest 6 for overview
+                    api.getRLInsights(opts)
+                ]);
+
+                setOverview(overviewRes);
+                setSessions(sessionsRes.data);
+                setRlInsights(insightsRes);
+            } catch (err) {
+                console.error('Failed to load dashboard data:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadDashboard();
     }, []);
 
     if (isLoading || !overview) {
@@ -103,22 +89,38 @@ export default function OverviewPage() {
                 <div className="kpi-card">
                     <div className="kpi-label">Total Sessions</div>
                     <div className="kpi-value">{overview.totalSessions.toLocaleString()}</div>
-                    <div className="kpi-change positive">↑ 12% vs last week</div>
+                    {typeof overview.totalSessionsChange === 'number' && overview.totalSessionsChange !== 0 ? (
+                        <div className={`kpi-change ${overview.totalSessionsChange > 0 ? 'positive' : 'negative'}`}>
+                            {overview.totalSessionsChange > 0 ? '↑' : '↓'} {Math.abs(overview.totalSessionsChange).toFixed(1)}% vs previous
+                        </div>
+                    ) : null}
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Success Rate</div>
                     <div className="kpi-value">{overview.successRate.toFixed(1)}%</div>
-                    <div className="kpi-change positive">↑ 3.2% improvement</div>
+                    {typeof overview.successRateChange === 'number' && overview.successRateChange !== 0 ? (
+                        <div className={`kpi-change ${overview.successRateChange > 0 ? 'positive' : 'negative'}`}>
+                            {overview.successRateChange > 0 ? '↑' : '↓'} {Math.abs(overview.successRateChange).toFixed(1)}% vs previous
+                        </div>
+                    ) : null}
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Cost per Success</div>
                     <div className="kpi-value">{formatCost(overview.avgCostPerSuccess)}</div>
-                    <div className="kpi-change negative">↑ $0.004 increase</div>
+                    {typeof overview.costPerSuccessChange === 'number' && overview.costPerSuccessChange !== 0 ? (
+                        <div className={`kpi-change ${overview.costPerSuccessChange <= 0 ? 'positive' : 'negative'}`}>
+                            {overview.costPerSuccessChange <= 0 ? '↓' : '↑'} ${Math.abs(overview.costPerSuccessChange).toFixed(3)} vs previous
+                        </div>
+                    ) : null}
                 </div>
                 <div className="kpi-card">
                     <div className="kpi-label">Loop Detection Rate</div>
                     <div className="kpi-value">{overview.loopDetectionRate.toFixed(1)}%</div>
-                    <div className="kpi-change positive">↓ 2.1% fewer loops</div>
+                    {typeof overview.loopDetectionRateChange === 'number' && overview.loopDetectionRateChange !== 0 ? (
+                        <div className={`kpi-change ${overview.loopDetectionRateChange <= 0 ? 'positive' : 'negative'}`}>
+                            {overview.loopDetectionRateChange <= 0 ? '↓' : '↑'} {Math.abs(overview.loopDetectionRateChange).toFixed(1)}% vs previous
+                        </div>
+                    ) : null}
                 </div>
             </div>
 
@@ -172,6 +174,7 @@ export default function OverviewPage() {
                     title="No data flowing in"
                     description="Your dashboard is ready, but we haven't received any agent telemetry yet. Make sure you have initialized the SDK in your agent's codebase."
                     actionLabel="View Integration Guide"
+                    onAction={() => window.open('https://github.com/itzvenkat/agentlens/tree/main/docs/wiki', '_blank')}
                 />
             ) : (
                 <div className="glass-card">

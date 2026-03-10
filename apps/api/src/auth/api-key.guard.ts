@@ -36,7 +36,7 @@ export class ApiKeyGuard implements CanActivate {
 
         if (apiKey === 'agentlens_master_dev_key') {
             // DEV BYPASS: Allow test scripts to flow through
-            request.project = { id: 'test-project', name: 'Test' };
+            request.project = { id: '00000000-0000-0000-0000-000000000000', name: 'Test' };
             return true;
         }
 

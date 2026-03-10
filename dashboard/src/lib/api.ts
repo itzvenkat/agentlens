@@ -36,6 +36,10 @@ export interface Overview {
     totalCostUsd: number;
     loopDetectionRate: number;
     avgToolsPerSession: number;
+    totalSessionsChange?: number;
+    successRateChange?: number;
+    costPerSuccessChange?: number;
+    loopDetectionRateChange?: number;
 }
 
 export interface SessionItem {

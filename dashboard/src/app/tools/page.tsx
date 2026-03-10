@@ -1,20 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { ToolEfficiency } from '@/lib/api';
+import { api, type ToolEfficiency } from '@/lib/api';
 import EmptyState from '@/components/EmptyState';
 import TableSkeleton from '@/components/TableSkeleton';
-
-const mockTools: ToolEfficiency[] = [
-    { toolName: 'read_file', totalCalls: 342, successRate: 94.7, avgDurationMs: 45, retryRate: 2.3, errorRate: 5.3 },
-    { toolName: 'search_codebase', totalCalls: 256, successRate: 88.3, avgDurationMs: 320, retryRate: 5.1, errorRate: 6.6 },
-    { toolName: 'write_file', totalCalls: 298, successRate: 82.1, avgDurationMs: 78, retryRate: 12.4, errorRate: 5.5 },
-    { toolName: 'run_terminal', totalCalls: 189, successRate: 76.2, avgDurationMs: 1250, retryRate: 8.9, errorRate: 14.9 },
-    { toolName: 'browser_action', totalCalls: 74, successRate: 53.2, avgDurationMs: 2400, retryRate: 23.1, errorRate: 23.7 },
-    { toolName: 'list_dir', totalCalls: 167, successRate: 97.6, avgDurationMs: 12, retryRate: 0.6, errorRate: 2.4 },
-    { toolName: 'view_file_outline', totalCalls: 134, successRate: 95.5, avgDurationMs: 28, retryRate: 1.1, errorRate: 3.4 },
-    { toolName: 'grep_search', totalCalls: 221, successRate: 91.0, avgDurationMs: 180, retryRate: 3.8, errorRate: 5.2 },
-];
 
 function getEfficiencyColor(rate: number): string {
     if (rate >= 90) return 'var(--status-success)';
@@ -33,9 +22,17 @@ export default function ToolsPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate network loading
-        const t = setTimeout(() => { setTools(mockTools); setIsLoading(false); }, 750);
-        return () => clearTimeout(t);
+        const fetchTools = async () => {
+            try {
+                const res = await api.getToolEfficiency({ apiKey: 'agentlens_master_dev_key' });
+                setTools(res);
+            } catch (err) {
+                console.error('Failed to fetch tool efficiency:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchTools();
     }, []);
 
     const sorted = [...tools].sort((a, b) => b.successRate - a.successRate);

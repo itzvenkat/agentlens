@@ -4,7 +4,7 @@ const nextConfig = {
     reactStrictMode: true,
     transpilePackages: ['date-fns'],
     env: {
-        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9471',
     },
 };
 

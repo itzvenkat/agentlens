@@ -43,11 +43,15 @@ export class AnalyticsController {
         @Req() req: any,
         @Query('page') page: string = '1',
         @Query('pageSize') pageSize: string = '20',
+        @Query('status') status?: string,
+        @Query('loopDetected') loopDetected?: string,
     ) {
         return this.analyticsService.getSessions(
             req.project.id,
             parseInt(page, 10),
             parseInt(pageSize, 10),
+            status,
+            loopDetected === 'true'
         );
     }
 

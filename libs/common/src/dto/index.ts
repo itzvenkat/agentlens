@@ -148,6 +148,12 @@ export class OverviewDto {
     totalCostUsd!: number;
     loopDetectionRate!: number;
     avgToolsPerSession!: number;
+
+    // Trend deltas vs previous period
+    totalSessionsChange?: number;
+    successRateChange?: number;
+    costPerSuccessChange?: number;
+    loopDetectionRateChange?: number;
 }
 
 export class ToolEfficiencyDto {
