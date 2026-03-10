@@ -1,11 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { DailyAggregate, AgentSession } from '@itzvenkat0/agentlens-common';
 
 @Injectable()
-export class AggregationService {
+export class AggregationService implements OnModuleInit {
     private readonly logger = new Logger(AggregationService.name);
 
     constructor(
@@ -15,12 +15,19 @@ export class AggregationService {
         private readonly sessionRepo: Repository<AgentSession>,
     ) { }
 
+    async onModuleInit() {
+        this.logger.log('Bootstrapping daily aggregates and reaping stale sessions...');
+        await this.reapStaleSessions();
+        await this.computeDailyAggregates();
+    }
+
     /**
      * Runs every hour to compute/update daily aggregates.
      * Uses UPSERT to handle re-runs gracefully.
      */
     @Cron(CronExpression.EVERY_HOUR)
     async computeDailyAggregates(): Promise<void> {
+        await this.reapStaleSessions();
         const today = new Date().toISOString().split('T')[0];
         this.logger.log(`Computing daily aggregates for ${today}...`);
 
@@ -65,5 +72,20 @@ export class AggregationService {
         }
 
         this.logger.log(`Daily aggregates computed for ${results.length} projects`);
+    }
+
+    /**
+     * Marks 'active' sessions as 'timeout' if no activity for > 30 minutes.
+     */
+    async reapStaleSessions(): Promise<void> {
+        this.logger.log('Reaping stale sessions...');
+        const result = await this.sessionRepo.query(
+            `UPDATE agent_sessions 
+             SET status = 'timeout', ended_at = NOW() 
+             WHERE status = 'active' 
+             AND updated_at < NOW() - INTERVAL '30 minutes'`
+        );
+        // Result is usually [rows, count] or similar depending on driver, 
+        // but we just need it executed.
     }
 }

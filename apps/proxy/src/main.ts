@@ -22,6 +22,30 @@ const AGENTLENS_URL = process.env.AGENTLENS_API_URL || 'http://localhost:9471';
 const AGENTLENS_KEY = process.env.AGENTLENS_API_KEY || '';
 const DEFAULT_UPSTREAM = process.env.UPSTREAM_BASE_URL || 'https://api.openai.com';
 
+// ── Utilities ───────────────────────────────────────────────────────────────
+
+/**
+ * Heuristically finds a value for a key in a deeply nested object.
+ * Useful for extracting "usage" or "model" from varying LLM provider formats.
+ */
+function findDeepKey(obj: any, targetKeys: string[]): any {
+    if (!obj || typeof obj !== 'object') return undefined;
+
+    // Check current level
+    for (const key of targetKeys) {
+        if (key in obj) return obj[key];
+    }
+
+    // Recurse
+    for (const key in obj) {
+        if (typeof obj[key] === 'object') {
+            const found = findDeepKey(obj[key], targetKeys);
+            if (found !== undefined) return found;
+        }
+    }
+    return undefined;
+}
+
 // ── Provider detection ──────────────────────────────────────────────────────
 
 interface ProviderConfig {
@@ -81,7 +105,6 @@ const PROVIDERS: Record<string, ProviderConfig> = {
             outputTokens: res?.usageMetadata?.candidatesTokenCount,
         }),
         extractModel: (req, res, url) => {
-            // Google model can be in req.model OR in the URL: .../models/{model}:generateContent
             if (req?.model) return req.model;
             if (url) {
                 const match = url.match(/\/models\/([^:]+)/);
@@ -91,16 +114,42 @@ const PROVIDERS: Record<string, ProviderConfig> = {
         },
         extractToolCalls: () => [],
     },
-    ollama: {
-        name: 'ollama',
-        upstream: 'http://localhost:11434',
-        extractUsage: (res) => ({
-            inputTokens: res?.prompt_eval_count,
-            outputTokens: res?.eval_count,
-        }),
-        extractModel: (req, res) => req?.model || res?.model || 'unknown',
-        extractToolCalls: () => [],
-    },
+    universal: {
+        name: 'universal',
+        upstream: DEFAULT_UPSTREAM,
+        extractUsage: (res) => {
+            // Heuristic usage search
+            const input = findDeepKey(res, ['prompt_tokens', 'input_tokens', 'promptTokenCount', 'input_token_count']);
+            const output = findDeepKey(res, ['completion_tokens', 'output_tokens', 'candidatesTokenCount', 'output_token_count']);
+            return {
+                inputTokens: Number(input) || 0,
+                outputTokens: Number(output) || 0,
+            };
+        },
+        extractModel: (req, res, url) => {
+            const model = findDeepKey(req, ['model']) || findDeepKey(res, ['model']);
+            if (model) return String(model);
+            if (url) {
+                // Try to find /models/xxx or /xxx:generateContent
+                const match = url.match(/\/models\/([^/:]+)/) || url.match(/\/v1\/([^/:]+)/);
+                if (match && !['chat', 'completions', 'embeddings'].includes(match[1])) return match[1];
+            }
+            return 'universal-llm';
+        },
+        extractToolCalls: (res) => {
+            // Generic tool call search: find ANY array named 'tool_calls' or objects with 'tool_use'
+            const calls: Array<{ name: string; input?: any }> = [];
+            const rawCalls = findDeepKey(res, ['tool_calls', 'tool_use']);
+            if (Array.isArray(rawCalls)) {
+                for (const tc of rawCalls) {
+                    const name = tc.name || tc.function?.name;
+                    const input = tc.input || tc.function?.arguments;
+                    if (name) calls.push({ name, input: typeof input === 'string' ? JSON.parse(input) : input });
+                }
+            }
+            return calls;
+        }
+    }
 };
 
 // ── Detect provider from request headers ────────────────────────────────────
@@ -127,8 +176,8 @@ function detectProvider(headers: IncomingMessage['headers'], url?: string): Prov
         return PROVIDERS[override.toLowerCase()];
     }
 
-    // Default to OpenAI-compatible
-    return PROVIDERS.openai;
+    // Default to Universal
+    return PROVIDERS.universal;
 }
 
 // ── Buffer management ───────────────────────────────────────────────────────

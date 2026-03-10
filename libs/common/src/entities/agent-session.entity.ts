@@ -6,6 +6,7 @@ import {
     ManyToOne,
     OneToMany,
     JoinColumn,
+    UpdateDateColumn,
     Index,
 } from 'typeorm';
 import { Project } from './project.entity';
@@ -71,6 +72,9 @@ export class AgentSession {
 
     @CreateDateColumn({ name: 'started_at' })
     startedAt!: Date;
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt!: Date;
 
     @Column({ type: 'timestamptz', nullable: true, name: 'ended_at' })
     endedAt!: Date | null;

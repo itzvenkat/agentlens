@@ -117,6 +117,8 @@ export class IngestService {
             parentSpanId: dto.parentSpanId || null,
             type: dto.type,
             name: dto.name || null,
+            model: dto.model || null,
+            provider: dto.provider || null,
             inputTokens: dto.inputTokens || 0,
             outputTokens: dto.outputTokens || 0,
             durationMs: dto.durationMs || null,
@@ -164,8 +166,24 @@ export class IngestService {
         const outputTokens = parseInt(spanCounts.total_output, 10);
 
         // Calculate dynamic USD cost based on model tokens
-        const session = await this.sessionRepo.findOne({ select: ['id', 'model'], where: { id: sessionId } });
-        const costUsd = this.pricingService.calculateCost(session?.model || null, inputTokens, outputTokens);
+        const session = await this.sessionRepo.findOne({ select: ['id', 'model', 'provider'], where: { id: sessionId } });
+
+        let currentModel = session?.model;
+        let currentProvider = session?.provider;
+
+        // Model Backfill: If session model is missing, try to find it from any span
+        if (!currentModel || currentModel === 'Unknown') {
+            const [spanWithModel] = await this.spanRepo.query(
+                `SELECT model, provider FROM spans WHERE session_id = $1 AND model IS NOT NULL LIMIT 1`,
+                [sessionId]
+            );
+            if (spanWithModel) {
+                currentModel = spanWithModel.model;
+                currentProvider = spanWithModel.provider;
+            }
+        }
+
+        const costUsd = this.pricingService.calculateCost(currentModel || null, inputTokens, outputTokens);
 
         await this.sessionRepo.update(sessionId, {
             totalInputTokens: inputTokens,
@@ -173,6 +191,8 @@ export class IngestService {
             totalCostUsd: costUsd,
             toolCallsCount: parseInt(spanCounts.tool_count, 10),
             llmCallsCount: parseInt(spanCounts.llm_count, 10),
+            model: currentModel || session?.model,
+            provider: currentProvider || session?.provider
         });
     }
 

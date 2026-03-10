@@ -61,6 +61,27 @@ export default function OverviewPage() {
         };
 
         loadDashboard();
+
+        // Subscribe to real-time updates via SSE
+        const apiKey = process.env.NEXT_PUBLIC_API_KEY || 'agentlens_master_dev_key';
+        const eventSource = new EventSource(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9471'}/v1/analytics/stream?apiKey=${apiKey}`, {
+            withCredentials: false
+        });
+
+        eventSource.onmessage = (event) => {
+            try {
+                const message = JSON.parse(event.data);
+                if (message.type === 'overview') {
+                    setOverview(message.data);
+                }
+            } catch (err) {
+                console.error('SSE Parse Error:', err);
+            }
+        };
+
+        return () => {
+            eventSource.close();
+        };
     }, []);
 
     if (isLoading || !overview) {

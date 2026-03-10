@@ -28,7 +28,7 @@ export class ApiKeyGuard implements CanActivate {
         if (isPublic) return true;
 
         const request = context.switchToHttp().getRequest();
-        const apiKey = request.headers['x-api-key'] as string;
+        const apiKey = (request.headers['x-api-key'] || request.query['apiKey']) as string;
 
         if (!apiKey) {
             throw new UnauthorizedException('Missing X-API-Key header');
@@ -40,6 +40,7 @@ export class ApiKeyGuard implements CanActivate {
             // DEV BYPASS: Use the first available project
             const firstProject = await this.projectRepo.findOne({ where: { isActive: true }, order: { createdAt: 'ASC' } });
             if (firstProject) {
+                this.logger.debug(`Master key bypass: using project ${firstProject.name} (${firstProject.id})`);
                 request.project = firstProject;
                 return true;
             }

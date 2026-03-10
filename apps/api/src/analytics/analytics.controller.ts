@@ -8,7 +8,7 @@ import {
     MessageEvent,
     Logger,
 } from '@nestjs/common';
-import { Observable, interval, map } from 'rxjs';
+import { Observable, interval, from, switchMap } from 'rxjs';
 import { AnalyticsService } from './analytics.service';
 import { RLRewardService } from '../processor/rl-reward.service';
 
@@ -93,18 +93,14 @@ export class AnalyticsController {
         const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
         return interval(10000).pipe(
-            map(async () => {
-                try {
-                    const overview = await this.analyticsService.getOverview(projectId, thirtyDaysAgo, now);
-                    return { data: overview } as MessageEvent;
-                } catch {
-                    return { data: { error: 'Failed to fetch updates' } } as MessageEvent;
-                }
-            }),
-            map((promise) => {
-                // Return a placeholder — the async data will be streamed
-                return { data: { type: 'heartbeat', timestamp: new Date().toISOString() } } as MessageEvent;
-            }),
+            switchMap(() => from(
+                this.analyticsService.getOverview(projectId, thirtyDaysAgo, now)
+                    .then(overview => ({ data: overview, type: 'overview' } as MessageEvent))
+                    .catch(err => {
+                        this.logger.error(`SSE Stream Error: ${err.message}`);
+                        return { data: { error: 'Failed' }, type: 'error' } as MessageEvent;
+                    })
+            ))
         );
     }
 }

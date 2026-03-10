@@ -35,6 +35,12 @@ export class Span {
     @Column({ type: 'varchar', length: 255, nullable: true })
     name!: string | null;
 
+    @Column({ type: 'varchar', length: 128, nullable: true })
+    model!: string | null;
+
+    @Column({ type: 'varchar', length: 128, nullable: true })
+    provider!: string | null;
+
     @Column({ type: 'int', default: 0, name: 'input_tokens' })
     inputTokens!: number;
 
