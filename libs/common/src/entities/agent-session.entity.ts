@@ -57,6 +57,12 @@ export class AgentSession {
     @Column({ type: 'boolean', default: false, name: 'loop_detected' })
     loopDetected!: boolean;
 
+    @Column({ type: 'varchar', length: 32, default: 'none', name: 'intervention_status' })
+    interventionStatus!: string; // 'none' | 'pending' | 'resolved'
+
+    @Column({ type: 'text', nullable: true, name: 'intervention_hint' })
+    interventionHint!: string | null;
+
     @Column({ type: 'jsonb', nullable: true })
     metadata!: Record<string, unknown> | null;
 

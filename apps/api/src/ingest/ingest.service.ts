@@ -196,4 +196,28 @@ export class IngestService {
 
         this.logger.log(`Session ended: ${sessionId} → ${status}`);
     }
+
+    async getInterventionStatus(traceId: string): Promise<{ status: string; hint: string | null; sessionId: string } | null> {
+        const session = await this.sessionRepo.findOne({
+            select: ['id', 'interventionStatus', 'interventionHint'],
+            where: { traceId }
+        });
+
+        if (!session) return null;
+
+        return {
+            status: session.interventionStatus,
+            hint: session.interventionHint,
+            sessionId: session.id,
+        };
+    }
+
+    async resolveIntervention(sessionId: string, hint: string): Promise<void> {
+        await this.sessionRepo.update(sessionId, {
+            interventionStatus: 'resolved',
+            interventionHint: hint,
+        });
+
+        this.logger.log(`Intervention resolved for session ${sessionId} with hint: "${hint}"`);
+    }
 }

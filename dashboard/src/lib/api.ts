@@ -110,4 +110,10 @@ export const api = {
 
     getRLInsights: (opts: FetchOptions) =>
         apiFetch<RLInsight[]>('/v1/analytics/rl-insights', opts),
+
+    resolveIntervention: (sessionId: string, hint: string, opts: FetchOptions) =>
+        apiFetch<{ status: string; message: string }>(`/v1/interventions/resolve/${sessionId}`, {
+            ...opts,
+            params: undefined, // ensure no query params leak into the POST payload
+        }),
 };

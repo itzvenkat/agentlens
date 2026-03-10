@@ -132,6 +132,8 @@ curl -X POST http://localhost:9471/v1/ingest/end-session \
 | `GET /v1/analytics/overview` | KPI summary (sessions, tokens, costs, success rate) |
 | `GET /v1/analytics/sessions` | Paginated session list |
 | `GET /v1/analytics/sessions/:id/trace` | Span waterfall for a session |
+| `GET /v1/interventions/:traceId` | Check active intervention state for a trace |
+| `POST /v1/interventions/resolve/:sessionId` | Submit a developer hint to release a stuck trace |
 | `GET /v1/analytics/tools` | Tool efficiency metrics |
 | `GET /v1/analytics/retention` | Retention data (daily agent activity) |
 | `GET /v1/analytics/rl-insights` | RL Q-value tool rankings |

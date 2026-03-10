@@ -52,6 +52,22 @@ Header: X-API-Key
 | `status` | string | ✅ | `success`, `failure`, or `timeout` |
 | `errorMessage` | string | | Error message (for failures) |
 
+#### Check intervention status
+```
+GET /v1/interventions/:traceId
+Header: X-API-Key
+```
+Returns `{ status: 'none' | 'pending' | 'resolved', hint?: string }`.
+
+#### Resolve intervention
+```
+POST /v1/interventions/resolve/:sessionId
+Header: X-API-Key
+```
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `hint` | string | ✅ | Textual steering hint for the looping agent |
+
 ---
 
 ### Analytics

@@ -20,6 +20,7 @@
 It captures telemetry (LLM calls, tool usage, token consumption) and turns it into actionable insights:
 
 - 📊 **Session traces** — See exactly what your agent did, step by step
+- 🛑 **Agent Loop Intervention** — First-of-its-kind "Kill Switch". Safely stall looping agents at the network proxy layer and instantly inject a natural language hint via the Dashboard to steer them back on track.
 - 🔁 **Loop detection** — Automatically detect when agents get stuck in repetitive cycles
 - 💰 **Dynamic Cost Tracking** — Instead of hardcoding AI model prices (which change constantly), AgentLens features a background NestJS `PricingService` that syncs daily via Cron with the open-source LiteLLM JSON registry. It automatically fuzzy-matches your agent's current model to its real-time cost constants and calculates accurate USD `(inputTokens * inputPrice) + (outputTokens * outputPrice)` immediately during ingestion, giving you zero-maintenance billing observability.
 - 🧠 **RL-powered insights** — Q-learning scores each tool based on real outcomes
@@ -276,7 +277,7 @@ curl -X POST http://localhost:9471/v1/ingest \
 Open [http://localhost:9472](http://localhost:9472) to see:
 
 - **Overview** — KPIs, RL tool ratings, recent sessions
-- **Sessions** — Filterable list with full trace data (expandable span trees)
+- **Sessions (with Kill Switch)** — Filterable list with full trace data. Includes a **Halt & Steer** UI to actively intervene in looping agents and inject custom developer hints.
 - **Tool Efficiency** — Which tools help agents succeed vs. cause loops
 - **Retention** — Daily agent activity and return rates
 
@@ -289,6 +290,8 @@ All endpoints require `X-API-Key` header except those marked as public.
 | `POST` | `/v1/projects` | Create a project (requires `X-Master-Key`) |
 | `POST` | `/v1/ingest` | Ingest a batch of spans |
 | `POST` | `/v1/ingest/end-session` | End a session with final status |
+| `GET` | `/v1/interventions/:traceId` | Check active intervention state for a trace |
+| `POST` | `/v1/interventions/resolve/:sessionId` | Submit a developer hint to release a stuck trace |
 | `GET` | `/v1/analytics/overview` | KPI summary |
 | `GET` | `/v1/analytics/sessions` | Paginated session list |
 | `GET` | `/v1/analytics/sessions/:id/trace` | Span waterfall for a session |

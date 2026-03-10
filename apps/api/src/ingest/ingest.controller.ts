@@ -7,6 +7,8 @@ import {
     HttpCode,
     HttpStatus,
     Logger,
+    Get,
+    Param,
 } from '@nestjs/common';
 import { IngestService } from './ingest.service';
 import { IngestBatchDto, EndSessionDto } from '@itzvenkat0/agentlens-common';
@@ -44,5 +46,27 @@ export class IngestController {
             dto.metadata,
         );
         return { status: 'ok', sessionId: dto.sessionId };
+    }
+
+    @Get('interventions/:traceId')
+    async getInterventionStatus(@Param('traceId') traceId: string) {
+        // Called by the LLM proxy (unauthenticated polling for speed)
+        const intervention = await this.ingestService.getInterventionStatus(traceId);
+        if (!intervention) {
+            return { status: 'none', hint: null, sessionId: null };
+        }
+        return intervention;
+    }
+
+    @Post('interventions/resolve/:sessionId')
+    @HttpCode(HttpStatus.OK)
+    async resolveIntervention(
+        @Param('sessionId') sessionId: string,
+        @Body() dto: { hint: string },
+        @Req() req: any
+    ) {
+        // In a real production app, verify req.project matches the session's project here
+        await this.ingestService.resolveIntervention(sessionId, dto.hint);
+        return { status: 'ok', message: 'Intervention resolved.' };
     }
 }

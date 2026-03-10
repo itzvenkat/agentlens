@@ -7,6 +7,7 @@ AgentLens is a self-hosted platform that captures telemetry from autonomous AI a
 ## What it does
 
 - 📊 **Session traces** — See exactly what your agent did, step by step
+- 🛑 **Agent Loop Intervention** — First-of-its-kind "Kill Switch" to stall looping agents and manually inject steering hints via the Dashboard.
 - 🔁 **Loop detection** — Automatically detect when agents get stuck in repetitive cycles
 - 💰 **Cost tracking** — Know how many tokens each session burns
 - 🧠 **RL-powered insights** — Q-learning scores each tool based on real outcomes

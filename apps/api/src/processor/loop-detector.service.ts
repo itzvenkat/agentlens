@@ -47,8 +47,11 @@ export class LoopDetectorService {
             `Loop detected in session ${sessionId}: ${loops.length} repeating tool patterns`,
         );
 
-        // Flag the session
-        await this.sessionRepo.update(sessionId, { loopDetected: true });
+        // Flag the session and arm the intervention trap
+        await this.sessionRepo.update(sessionId, {
+            loopDetected: true,
+            interventionStatus: 'pending' // Tell the Proxy to block the next request
+        });
 
         // Mark retry tool calls
         for (const loop of loops) {

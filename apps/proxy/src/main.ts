@@ -191,7 +191,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     const spanId = crypto.randomUUID();
 
     // Read request body
-    const bodyBuffer = await readBody(req);
+    let bodyBuffer = await readBody(req);
     let reqBody: any;
     try {
         reqBody = bodyBuffer.length > 0 ? JSON.parse(bodyBuffer.toString()) : undefined;
@@ -207,6 +207,47 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     }
 
     try {
+        // --- AgentLens Intervention Trap (Kill Switch) ---
+        let interventionResolved = false;
+        let interventionHint: string | null = null;
+
+        while (!interventionResolved) {
+            try {
+                // Poll AgentLens backend for the active trace trap status
+                const res = await fetch(`${AGENTLENS_URL}/v1/interventions/${traceId}`, {
+                    headers: { 'X-API-Key': AGENTLENS_KEY || 'agentlens_master_dev_key' }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.status === 'pending') {
+                        // Trap armed: Block the agent from hitting the upstream LLM API.
+                        // Pause the request for 2 seconds and check again.
+                        console.log(`[proxy] Trap armed for trace ${traceId}. Pausing upstream LLM request...`);
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        continue;
+                    } else if (data.status === 'resolved' && data.hint) {
+                        // Developer intervened and provided a hint. Inject it into the prompt.
+                        interventionHint = data.hint;
+                        console.log(`[proxy] Trace ${traceId} released. Injecting developer hint: "${interventionHint}"`);
+                    }
+                }
+            } catch (err) {
+                // Fail open - if AgentLens API is down, don't break the agent
+                console.error('[proxy] Failed to poll intervention status:', (err as Error).message);
+            }
+            interventionResolved = true;
+        }
+
+        // --- Prompt Injection Logic ---
+        if (interventionHint && reqBody && Array.isArray(reqBody.messages)) {
+            reqBody.messages.push({
+                role: 'system',
+                content: `[AGENTLENS DEVELOPER OVERRIDE]: ${interventionHint}`
+            });
+            // Rebuild the buffer so the forwarded request has the new hint
+            bodyBuffer = Buffer.from(JSON.stringify(reqBody));
+        }
+
         // Forward to upstream
         const upstreamRes = await fetch(upstreamUrl, {
             method: req.method || 'POST',

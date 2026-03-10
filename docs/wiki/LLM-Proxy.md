@@ -15,6 +15,7 @@ The proxy:
 - Reads the response to extract token usage, model, tool calls
 - Logs everything to AgentLens as spans
 - Supports both streaming and non-streaming responses
+- **Agent Loop Intervention**: Before forwarding requests, the proxy checks the AgentLens API trap. If a loop is detected, it pauses the network request and waits for a developer hint injection, acting as a real-time Kill Switch.
 - Adds **zero latency** to the actual API call (logging is async)
 
 ## Setup

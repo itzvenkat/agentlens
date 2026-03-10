@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import type { SessionItem } from '@/lib/api';
+import { api, type SessionItem } from '@/lib/api';
 import EmptyState from '@/components/EmptyState';
 import TableSkeleton from '@/components/TableSkeleton';
 
@@ -39,6 +39,11 @@ export default function SessionsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<string>('all');
 
+    // Intervention Modal State
+    const [interventionTrace, setInterventionTrace] = useState<SessionItem | null>(null);
+    const [hintText, setHintText] = useState('');
+    const [isResolving, setIsResolving] = useState(false);
+
     useEffect(() => {
         // Simulate network loading
         const t = setTimeout(() => { setSessions(mockSessions); setIsLoading(false); }, 600);
@@ -50,6 +55,24 @@ export default function SessionsPage() {
         : sessions.filter((s) =>
             filter === 'loops' ? s.loopDetected : s.status === filter
         );
+
+    const handleResolve = async () => {
+        if (!interventionTrace || !hintText.trim()) return;
+        setIsResolving(true);
+        try {
+            await api.resolveIntervention(interventionTrace.id, hintText, { apiKey: 'agentlens_master_dev_key' });
+
+            // Update UI speculatively
+            setSessions(prev => prev.map(s => s.id === interventionTrace.id ? { ...s, loopDetected: false, status: 'active' } : s));
+            setInterventionTrace(null);
+            setHintText('');
+        } catch (err) {
+            console.error('Failed to resolve intervention:', err);
+            alert('Failed to steer agent: ' + (err as Error).message);
+        } finally {
+            setIsResolving(false);
+        }
+    };
 
     return (
         <>
@@ -108,6 +131,7 @@ export default function SessionsPage() {
                                     <th>Cost</th>
                                     <th>Tools</th>
                                     <th>Duration / When</th>
+                                    <th>Intervention</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -126,6 +150,30 @@ export default function SessionsPage() {
                                                 {formatDistanceToNow(new Date(s.startedAt), { addSuffix: true })}
                                             </div>
                                         </td>
+                                        <td>
+                                            {s.loopDetected && (
+                                                <button
+                                                    onClick={() => setInterventionTrace(s)}
+                                                    style={{
+                                                        background: 'var(--gradient-warning)',
+                                                        border: 'none',
+                                                        borderRadius: '6px',
+                                                        padding: '6px 14px',
+                                                        color: '#fff',
+                                                        fontWeight: 600,
+                                                        fontSize: '13px',
+                                                        cursor: 'pointer',
+                                                        boxShadow: '0 2px 8px rgba(249, 115, 22, 0.4)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '6px',
+                                                        animation: 'pulse 2s infinite'
+                                                    }}
+                                                >
+                                                    <span>🚨</span> Halt & Steer
+                                                </button>
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -138,6 +186,71 @@ export default function SessionsPage() {
                             <div>No sessions match filter "{filter}"</div>
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* ── Intervention Modal ── */}
+            {interventionTrace && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                    background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
+                    zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                    <div className="glass-card" style={{ width: '100%', maxWidth: '500px', padding: '24px', position: 'relative' }}>
+                        <div style={{
+                            position: 'absolute', top: '-10px', left: '-10px', width: '20px', height: '20px',
+                            background: 'var(--status-warning)', borderRadius: '50%', boxShadow: '0 0 20px var(--status-warning)',
+                            animation: 'pulse 2s infinite'
+                        }} />
+
+                        <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span>🛑</span> Intercept Agent Loop
+                        </h2>
+
+                        <div style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', background: 'rgba(0,0,0,0.3)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            Agent <code style={{ color: 'var(--accent-secondary)' }}>{interventionTrace.traceId}</code> is currently physically paused due to a detected tool loop. By providing a hint, the Proxy will inject your text into the agent's prompt and release the loop lock.
+                        </div>
+
+                        <div style={{ marginBottom: '16px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: 'var(--text-tertiary)', marginBottom: '8px' }}>
+                                Developer Hint (System Override)
+                            </label>
+                            <textarea
+                                value={hintText}
+                                onChange={(e) => setHintText(e.target.value)}
+                                placeholder="e.g. You are stuck because the file is read-only. Try using the search tool instead."
+                                style={{
+                                    width: '100%', height: '100px', background: 'var(--bg-tertiary)', border: '1px solid var(--bg-glass-border)',
+                                    borderRadius: '8px', padding: '12px', color: 'var(--text-primary)', fontSize: '14px',
+                                    resize: 'none', fontFamily: 'inherit'
+                                }}
+                            />
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                            <button
+                                onClick={() => { setInterventionTrace(null); setHintText(''); }}
+                                style={{
+                                    padding: '8px 16px', background: 'transparent', border: '1px solid var(--bg-glass-border)',
+                                    color: 'var(--text-secondary)', borderRadius: '6px', cursor: 'pointer', fontSize: '14px', fontWeight: 500
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleResolve}
+                                disabled={isResolving || !hintText.trim()}
+                                style={{
+                                    padding: '8px 20px', background: 'var(--gradient-success)', border: 'none',
+                                    color: '#fff', borderRadius: '6px', cursor: isResolving || !hintText.trim() ? 'not-allowed' : 'pointer',
+                                    fontSize: '14px', fontWeight: 600, opacity: isResolving || !hintText.trim() ? 0.6 : 1,
+                                    display: 'flex', alignItems: 'center', gap: '8px'
+                                }}
+                            >
+                                {isResolving ? 'Steering...' : 'Release Agent & Inject'}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </>
